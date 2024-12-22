@@ -1,4 +1,6 @@
 .cache/
 dep/
 obj/
+isodir/
 kfs1.bin
+kfs1.iso

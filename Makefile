@@ -2,7 +2,7 @@ CC=clang
 CASM=nasm
 ASM_FLAGS=-felf32
 NAME=kfs1.bin
-NAME_ISO=$(subst .bin, .iso, $(NAME))
+NAME_ISO=$(subst .bin,.iso, $(NAME))
 OBJ_DIR=obj/
 DEP_DIR=dep/
 SRC_DIR=src/
@@ -40,6 +40,9 @@ $(NAME): $(OBJS)
 
 all: $(NAME)
 
+run:
+	qemu-system-i386 -kernel kfs1.bin
+
 sanitize: fclean
 sanitize: CFLAGS=-fno-builtin -fno-exceptions -fno-stack-protector -nostdlib \
 	-nodefaultlibs -std=gnu99 -ffreestanding -O2 -Wall -Wextra
@@ -50,6 +53,7 @@ clean:
 
 fclean: clean
 	rm -rf $(NAME)
+	rm -rf $(NAME_ISO)
 
 re: fclean all
 
