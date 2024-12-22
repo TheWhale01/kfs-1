@@ -41,7 +41,6 @@ static inline uint16_t vga_entry(unsigned char uc, uint8_t color)
 {
 	return (uint16_t) uc | (uint16_t) color << 8;
 }
-
 size_t strlen(const char *str) {
 	size_t len = 0;
 	while (str[len])
@@ -62,8 +61,8 @@ void terminal_initialize(void)
 {
 	terminal_row = 0;
 	terminal_column = 0;
-	terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
-	terminal_buffer = (uint16_t*) 0xB8000;
+	terminal_color = vga_entry_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
+	terminal_buffer = (uint16_t*) 0xB8000; // bizarre
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
 			const size_t index = y * VGA_WIDTH + x;
@@ -85,11 +84,20 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
 
 void terminal_putchar(char c)
 {
-	terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
-	if (++terminal_column == VGA_WIDTH) {
-		terminal_column = 0;
-		if (++terminal_row == VGA_HEIGHT)
-			terminal_row = 0;
+	switch (c) {
+		case '\n':
+			terminal_column = 0;
+			++terminal_row;
+			break;
+		default:
+			// Prints on screen ?
+			terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
+			if (++terminal_column == VGA_WIDTH) {
+				terminal_column = 0;
+				if (++terminal_row == VGA_HEIGHT)
+					terminal_row = 0;
+			}
+			break;
 	}
 }
 
@@ -109,6 +117,9 @@ void kernel_main(void)
 	/* Initialize terminal interface */
 	terminal_initialize();
 
+	// Setting font color
+	terminal_setcolor(vga_entry_color(VGA_COLOR_BLACK, VGA_COLOR_WHITE));
+
 	/* Newline support is left as an exercise. */
-	terminal_writestring("42");
+	terminal_writestring("42\nbonsoir");
 }
