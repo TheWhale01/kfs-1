@@ -1,4 +1,4 @@
-CC=clang
+CC=gcc
 CASM=nasm
 ASM_FLAGS=-felf32
 NAME=kfs1.bin
@@ -16,7 +16,7 @@ BOOT_FILE=$(addprefix $(SRC_DIR), boot.asm)
 BOOT_FILE_OBJ=$(addprefix $(OBJ_DIR), boot.o)
 LINKER_FILE=$(addprefix $(SRC_DIR), linker.ld)
 
-SRCS= $(addprefix $(SRC_DIR), kernel.c utils.c)
+SRCS= $(addprefix $(SRC_DIR), kernel.c)
 DEP= $(patsubst $(SRC_DIR)%.c, $(DEP_DIR)%.d, $(SRCS))
 OBJS= $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
 
@@ -41,6 +41,9 @@ $(NAME): $(OBJS)
 all: $(NAME)
 
 run:
+	qemu-system-i386 -cdrom kfs1.iso
+
+run_kernel:
 	qemu-system-i386 -kernel kfs1.bin
 
 sanitize: fclean
@@ -59,4 +62,4 @@ re: fclean all
 
 -include $(DEP)
 
-.PHONY: all clean fclean re sanitize
+.PHONY: all clean fclean re sanitize run run_kernel

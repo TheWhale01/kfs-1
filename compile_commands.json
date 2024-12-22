@@ -1,7 +1,7 @@
 [
   {
     "arguments": [
-      "/usr/bin/clang",
+      "/usr/bin/gcc",
       "-fno-builtin",
       "-fno-exceptions",
       "-fno-stack-protector",
@@ -18,31 +18,8 @@
       "obj/kernel.o",
       "src/kernel.c"
     ],
-    "directory": "/home/whale/Documents/code/kfs-1",
-    "file": "/home/whale/Documents/code/kfs-1/src/kernel.c",
-    "output": "/home/whale/Documents/code/kfs-1/obj/kernel.o"
-  },
-  {
-    "arguments": [
-      "/usr/bin/clang",
-      "-fno-builtin",
-      "-fno-exceptions",
-      "-fno-stack-protector",
-      "-std=gnu99",
-      "-ffreestanding",
-      "-O2",
-      "-Wall",
-      "-Wextra",
-      "-m32",
-      "-I",
-      "includes/",
-      "-c",
-      "-o",
-      "obj/utils.o",
-      "src/utils.c"
-    ],
-    "directory": "/home/whale/Documents/code/kfs-1",
-    "file": "/home/whale/Documents/code/kfs-1/src/utils.c",
-    "output": "/home/whale/Documents/code/kfs-1/obj/utils.o"
+    "directory": "/home/whale/code/kfs-1",
+    "file": "/home/whale/code/kfs-1/src/kernel.c",
+    "output": "/home/whale/code/kfs-1/obj/kernel.o"
   }
 ]
