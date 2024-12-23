@@ -5,7 +5,7 @@ void terminal_initialize(term_data *t_data)
 	t_data->cursor->pos_y = 0;
 	t_data->cursor->pos_x = 0;
 	t_data->color = vga_entry_color(VGA_COLOR_WHITE, VGA_COLOR_BLACK);
-	t_data->buffer = (uint16_t*) 0xB8000; // Buffer for screen
+	t_data->buffer = (uint16_t*)TERMINAL_BUFFER; // Buffer for screen
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
 			const size_t index = y * VGA_WIDTH + x;

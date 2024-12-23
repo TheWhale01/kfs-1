@@ -3,9 +3,11 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdarg.h>
 
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
+#define TERMINAL_BUFFER 0xB8000
 
 typedef struct {
 	uint8_t width;
