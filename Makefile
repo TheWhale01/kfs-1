@@ -1,4 +1,4 @@
-CC=clang
+CC=gcc
 CASM=nasm
 ASM_FLAGS=-felf32
 NAME=kfs1.bin
