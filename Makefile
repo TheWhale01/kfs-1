@@ -36,7 +36,7 @@ $(NAME): $(OBJS)
 	mkdir -p $(GRUB_DIR)
 	cp $(NAME) $(BOOT_DIR)
 	cp $(GRUB_CONFIG) $(GRUB_DIR)
-	grub-mkrescue -o $(NAME_ISO) $(ISO_DIR)
+	docker compose up --build
 
 all: $(NAME)
 
@@ -57,6 +57,7 @@ clean:
 fclean: clean
 	rm -rf $(NAME)
 	rm -rf $(NAME_ISO)
+	docker compose down
 
 re: fclean all
 

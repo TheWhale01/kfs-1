@@ -1,0 +1,8 @@
+services:
+  kfs:
+    container_name: kfs_isobuilder
+    image: ubuntu:latest
+    volumes:
+      - ./:/shared
+    working_dir: /shared
+    command: sh /shared/create_iso.sh
