@@ -1,11 +1,25 @@
 #pragma once
 #include <stddef.h>
 #include <stdint.h>
+#include <stdarg.h>
 
 #define VGA_HEIGHT 25
 #define VGA_WIDTH 80
 
-enum vga_color {
+#define KERN_EMERG "0"
+#define KERN_ALERT "1"
+#define KERN_CRIT "2"
+#define KERN_ERR "3"
+#define KERN_WARNING "4"
+#define KERN_NOTICE "5"
+#define KERN_INFO "6"
+#define KERN_DEBUG "7"
+
+#define DEC_BASE "0123456789"
+#define HEX_BASE "0123456789abcdef"
+#define HEX_BASE_UPPER "0123456789ABCDEF"
+
+typedef enum {
 	VGA_COLOR_BLACK = 0,
 	VGA_COLOR_BLUE = 1,
 	VGA_COLOR_GREEN = 2,
@@ -22,6 +36,25 @@ enum vga_color {
 	VGA_COLOR_LIGHT_MAGENTA = 13,
 	VGA_COLOR_LIGHT_BROWN = 14,
 	VGA_COLOR_WHITE = 15,
-};
+} vga_color_e;
+
+typedef struct {
+    size_t x;
+    size_t y;
+} cursor_t;
+
+typedef struct {
+    cursor_t *cursor;
+    uint16_t fcolor;
+    uint16_t bcolor;
+    volatile uint16_t* const VGA_MEMORY;
+} terminal_t;
+
+void line_break(cursor_t *cursor);
+void scroll(cursor_t *cursor);
+void vga_putchar(terminal_t *terminal, char c);
 
 size_t strlen(const char *str);
+size_t printk(terminal_t *terminal, const char *s, ...);
+size_t vga_putstring(terminal_t *terminal, const char *str);
+size_t vga_putnbr_base(terminal_t *terminal, int nb, const char *base);
