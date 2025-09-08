@@ -2,7 +2,7 @@ CC=gcc
 CASM=nasm
 ASM_FLAGS=-felf32
 NAME=julo.elf
-NAME_ISO=$(subst .bin,.iso, $(NAME))
+NAME_ISO=$(subst .elf,.iso,$(NAME))
 OBJ_DIR=obj/
 DEP_DIR=dep/
 SRC_DIR=src/
@@ -16,7 +16,7 @@ BOOT_FILE=$(addprefix $(SRC_DIR), boot.s)
 BOOT_FILE_OBJ=$(addprefix $(OBJ_DIR), boot.o)
 LINKER_FILE=linker.ld
 
-SRCS= $(addprefix $(SRC_DIR), main.c)
+SRCS= $(addprefix $(SRC_DIR), main.c strlen.c)
 DEP= $(patsubst $(SRC_DIR)%.c, $(DEP_DIR)%.d, $(SRCS))
 OBJS= $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
 
@@ -29,6 +29,7 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) -MMD -MP -MF $(patsubst $(OBJ_DIR)%.o, $(DEP_DIR)%.d, $@) -c $< -o $@
 
 $(NAME): $(OBJS)
+	mkdir -p $(BOOT_DIR)
 	$(CASM) $(ASM_FLAGS) $(BOOT_FILE) -o $(BOOT_FILE_OBJ)
 	$(CC) -T $(LINKER_FILE) -o $(NAME) $(CFLAGS) $(OBJS) $(BOOT_FILE_OBJ)
 	mkdir -p $(GRUB_DIR)
