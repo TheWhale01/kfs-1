@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdarg.h>
+#include <stdbool.h>
 
 #define VGA_HEIGHT 25
 #define VGA_WIDTH 80
@@ -55,6 +56,8 @@ void scroll(cursor_t *cursor);
 void vga_putchar(terminal_t *terminal, char c);
 
 size_t strlen(const char *str);
+size_t printaddr(terminal_t *terminal, const void *p);
 size_t printk(terminal_t *terminal, const char *s, ...);
 size_t vga_putstring(terminal_t *terminal, const char *str);
-size_t vga_putnbr_base(terminal_t *terminal, int nb, const char *base);
+size_t putnbr_base(terminal_t* terminal, int nb, const char *base);
+size_t putnbr_base_u(terminal_t* terminal, size_t nb, const char *base);
