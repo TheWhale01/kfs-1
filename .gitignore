@@ -5,3 +5,4 @@ bin/
 julo.*
 *.json
 .cache/
+!julo.h
