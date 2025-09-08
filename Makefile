@@ -1,7 +1,7 @@
 CC=gcc
 CASM=nasm
 ASM_FLAGS=-felf32
-NAME=kfs1.bin
+NAME=julo.elf
 NAME_ISO=$(subst .bin,.iso, $(NAME))
 OBJ_DIR=obj/
 DEP_DIR=dep/
@@ -12,9 +12,9 @@ BOOT_DIR=$(addsuffix /boot, $(ISO_DIR))
 GRUB_DIR=$(addsuffix /grub, $(BOOT_DIR))
 GRUB_CONFIG=grub.cfg
 
-BOOT_FILE=$(addprefix $(SRC_DIR), boot.asm)
+BOOT_FILE=$(addprefix $(SRC_DIR), boot.s)
 BOOT_FILE_OBJ=$(addprefix $(OBJ_DIR), boot.o)
-LINKER_FILE=$(addprefix $(SRC_DIR), linker.ld)
+LINKER_FILE=linker.ld
 
 SRCS= $(addprefix $(SRC_DIR), main.c)
 DEP= $(patsubst $(SRC_DIR)%.c, $(DEP_DIR)%.d, $(SRCS))
@@ -29,22 +29,21 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) -MMD -MP -MF $(patsubst $(OBJ_DIR)%.o, $(DEP_DIR)%.d, $@) -c $< -o $@
 
 $(NAME): $(OBJS)
-	echo $(NAME_ISO)
-	echo $(GRUB_DIR)
 	$(CASM) $(ASM_FLAGS) $(BOOT_FILE) -o $(BOOT_FILE_OBJ)
 	$(CC) -T $(LINKER_FILE) -o $(NAME) $(CFLAGS) $(OBJS) $(BOOT_FILE_OBJ)
 	mkdir -p $(GRUB_DIR)
 	cp $(NAME) $(BOOT_DIR)
 	cp $(GRUB_CONFIG) $(GRUB_DIR)
-	docker compose up --build
+	# docker compose up --build
+	grub-mkrescue -o $(NAME_ISO) $(ISO_DIR)
 
 all: $(NAME)
 
 run:
-	qemu-system-i386 -cdrom kfs1.iso
+	qemu-system-i386 -cdrom $(NAME_ISO)
 
 run_kernel:
-	qemu-system-i386 -kernel kfs1.bin
+	qemu-system-i386 -kernel $(NAME)
 
 sanitize: fclean
 sanitize: CFLAGS=-fno-builtin -fno-exceptions -fno-stack-protector -nostdlib \
@@ -57,7 +56,7 @@ clean:
 fclean: clean
 	rm -rf $(NAME)
 	rm -rf $(NAME_ISO)
-	docker compose down
+	# docker compose down
 
 re: fclean all
 

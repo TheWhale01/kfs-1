@@ -7,5 +7,7 @@ pkgs.mkShell {
 		clang
 		bear
 		grub2
+		nasm
+		xorriso
 	];
 }
