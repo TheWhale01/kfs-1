@@ -1,4 +1,4 @@
-CC=clang
+CC=gcc
 CASM=nasm
 ASM_FLAGS=-felf32
 NAME=kfs1.bin
@@ -16,7 +16,7 @@ BOOT_FILE=$(addprefix $(SRC_DIR), boot.asm)
 BOOT_FILE_OBJ=$(addprefix $(OBJ_DIR), boot.o)
 LINKER_FILE=$(addprefix $(SRC_DIR), linker.ld)
 
-SRCS= $(addprefix $(SRC_DIR), kernel.c terminal.c utils.c cursor.c)
+SRCS= $(addprefix $(SRC_DIR), main.c)
 DEP= $(patsubst $(SRC_DIR)%.c, $(DEP_DIR)%.d, $(SRCS))
 OBJS= $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
 
