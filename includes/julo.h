@@ -51,11 +51,10 @@ typedef struct {
     volatile uint16_t* const VGA_MEMORY;
 } terminal_t;
 
-void line_break(cursor_t *cursor);
 void scroll(cursor_t *cursor);
+void line_break(cursor_t *cursor);
 void vga_putchar(terminal_t *terminal, char c);
 
-size_t strlen(const char *str);
 size_t printaddr(terminal_t *terminal, const void *p);
 size_t printk(terminal_t *terminal, const char *s, ...);
 size_t vga_putstring(terminal_t *terminal, const char *str);

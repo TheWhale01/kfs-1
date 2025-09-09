@@ -4,6 +4,7 @@ OBJ_DIR=obj/
 DEP_DIR=dep/
 SRC_DIR=src/
 ISO_DIR=bin
+LIBFT_DIR=./src/libft
 INCLUDES=includes/
 GRUB_CONFIG=grub.cfg
 LINKER_FILE=linker.ld
@@ -16,7 +17,7 @@ GRUB_DIR=$(addsuffix /grub,$(BOOT_DIR))
 ASM_SRCS=$(addprefix $(SRC_DIR), boot.s)
 ASM_OBJS=$(patsubst $(SRC_DIR)%.s, $(OBJ_DIR)%.o, $(ASM_SRCS))
 
-SRCS= $(addprefix $(SRC_DIR), main.c strlen.c vga.c printk.c cursor.c)
+SRCS= $(addprefix $(SRC_DIR), main.c vga.c printk.c cursor.c printaddr.c putnbr.c)
 DEP= $(patsubst $(SRC_DIR)%.c, $(DEP_DIR)%.d, $(SRCS))
 OBJS= $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
 
@@ -33,7 +34,8 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.s
 
 $(NAME): $(OBJS) $(ASM_OBJS)
 	mkdir -p $(GRUB_DIR)
-	$(CC) -T $(LINKER_FILE) -o $(NAME) $(CFLAGS) $(OBJS) $(ASM_OBJS)
+	$(MAKE) -C $(LIBFT_DIR)
+	$(CC) -T $(LINKER_FILE) -o $(NAME) $(CFLAGS) $(OBJS) $(ASM_OBJS) $(LIBFT_DIR)/bin/libft.a
 	cp $(GRUB_CONFIG) $(GRUB_DIR)
 	cp $(NAME) $(BOOT_DIR)
 	grub-mkrescue -o $(NAME_ISO) $(ISO_DIR)
@@ -52,9 +54,11 @@ sanitize: CFLAGS=-fno-builtin -fno-exceptions -fno-stack-protector -nostdlib \
 sanitize: $(NAME)
 
 clean:
+	$(MAKE) -C $(LIBFT_DIR) clean
 	rm -rf $(OBJ_DIR) $(DEP_DIR) $(ISO_DIR)
 
 fclean: clean
+	$(MAKE) -C $(LIBFT_DIR) fclean
 	rm -rf $(NAME)
 	rm -rf $(NAME_ISO)
 	# docker compose down
