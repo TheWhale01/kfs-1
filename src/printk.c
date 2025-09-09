@@ -1,5 +1,4 @@
 #include "julo.h"
-#include <stddef.h>
 
 static size_t print_log_level(terminal_t *terminal, char c) {
     static const char *priority_msg[] = {
