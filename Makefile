@@ -1,5 +1,7 @@
 CC=gcc
+AR=ar rc
 CASM=nasm
+LIB_ASM=asm.a
 OBJ_DIR=obj/
 DEP_DIR=dep/
 SRC_DIR=src/
@@ -17,7 +19,8 @@ GRUB_DIR=$(addsuffix /grub,$(BOOT_DIR))
 ASM_SRCS=$(addprefix $(SRC_DIR), boot.s)
 ASM_OBJS=$(patsubst $(SRC_DIR)%.s, $(OBJ_DIR)%.o, $(ASM_SRCS))
 
-SRCS= $(addprefix $(SRC_DIR), main.c vga.c printk.c cursor.c printaddr.c putnbr.c)
+SRCS= $(addprefix $(SRC_DIR), main.c vga.c printk.c cursor.c printaddr.c putnbr.c \
+	inb.c outb.c)
 DEP= $(patsubst $(SRC_DIR)%.c, $(DEP_DIR)%.d, $(SRCS))
 OBJS= $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
 

@@ -19,6 +19,7 @@ void vga_putchar(terminal_t *terminal, char c) {
         if (++(terminal->cursor->y) >= VGA_HEIGHT)
             terminal->cursor->y = 0;
     }
+    update_cursor(terminal->cursor);
 }
 
 size_t vga_putstring(terminal_t *terminal, const char *str) {
