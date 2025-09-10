@@ -42,6 +42,10 @@ typedef enum {
 typedef struct {
     size_t x;
     size_t y;
+    const uint8_t end;
+    const uint8_t start;
+    volatile const size_t addr1;
+    volatile const size_t addr2;
 } cursor_t;
 
 typedef struct {
@@ -53,6 +57,10 @@ typedef struct {
 
 void scroll(cursor_t *cursor);
 void line_break(cursor_t *cursor);
+void outb(uint16_t port, uint8_t val);
+void update_cursor(const cursor_t *cursor);
+void enable_cursor(const cursor_t *cursor);
+void disable_cursor(const cursor_t *cursor);
 void vga_putchar(terminal_t *terminal, char c);
 
 size_t printaddr(terminal_t *terminal, const void *p);
@@ -60,3 +68,5 @@ size_t printk(terminal_t *terminal, const char *s, ...);
 size_t vga_putstring(terminal_t *terminal, const char *str);
 size_t putnbr_base(terminal_t* terminal, int nb, const char *base);
 size_t putnbr_base_u(terminal_t* terminal, size_t nb, const char *base);
+
+uint8_t inb(uint16_t port);

@@ -1,13 +1,18 @@
 #include "julo.h"
 
 int kernel_main(void) {
-    cursor_t cursor = { .x = 0, .y = 0 };
+    cursor_t cursor = {
+        .x = 0, .y = 0, .start = 15, .end = 15,
+        .addr1 = 0x3D4, .addr2 = 0x3D5
+    };
     terminal_t terminal = {
         .cursor = &cursor,
         .fcolor = VGA_COLOR_WHITE,
         .bcolor = VGA_COLOR_BLACK,
         .VGA_MEMORY = (volatile uint16_t*)0xB8000,
     };
+
+    enable_cursor(terminal.cursor);
 
     printk(&terminal, KERN_EMERG "%p\n", &cursor);
     printk(&terminal, KERN_ALERT "%d\n", 13);
@@ -17,6 +22,6 @@ int kernel_main(void) {
     printk(&terminal, KERN_NOTICE "%s\n", "BONSOIR JE NE SUIS PAS MOI");
     printk(&terminal, KERN_INFO "%x\n", 15);
     printk(&terminal, KERN_DEBUG "%X\n", 15);
-    printk(&terminal, "IMPOSTEUR: %%\n");
+    printk(&terminal, "IMPOSTEUR: %%");
     return (0);
 }
