@@ -4,7 +4,7 @@ OBJ_DIR=obj/
 SRC_DIR=src/
 INCLUDES=../../includes
 CFLAGS=-fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs \
-	-std=gnu99 -ffreestanding -O2 -Wall -Wextra -m32 -I $(INCLUDES)
+	-std=gnu99 -ffreestanding -O2 -Wall -Wextra -Werror -m32 -I $(INCLUDES)
 CFILES=$(addprefix $(SRC_DIR), ft_abs.c ft_atoll.c ft_isalnum.c ft_isascii.c ft_isprint.c \
 	ft_memchr.c ft_memcpy.c ft_memset.c ft_strcmp.c ft_strlcat.c \
 	ft_strlen.c ft_strnstr.c ft_swap.c ft_toupper.c ft_atoi.c ft_bzero.c ft_isalpha.c \

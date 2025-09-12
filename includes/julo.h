@@ -1,8 +1,10 @@
 #pragma once
+
 #include <stddef.h>
 #include <stdint.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include "libft.h"
 
 #define VGA_HEIGHT 25
 #define VGA_WIDTH 80
@@ -42,6 +44,8 @@ typedef enum {
 typedef struct {
     size_t x;
     size_t y;
+	size_t VGA_X[4];
+	size_t VGA_Y[4];
     const uint8_t end;
     const uint8_t start;
     volatile const size_t addr1;
@@ -50,14 +54,20 @@ typedef struct {
 
 typedef struct {
     cursor_t *cursor;
+	size_t screen;
     uint16_t fcolor;
     uint16_t bcolor;
     volatile uint16_t* const VGA_MEMORY;
+	uint16_t VGA_SCREEN[4][VGA_WIDTH * VGA_HEIGHT];
 } terminal_t;
 
-void scroll(cursor_t *cursor);
-void line_break(cursor_t *cursor);
+void scroll(terminal_t *terminal);
+void line_break(terminal_t *terminal);
 void outb(uint16_t port, uint8_t val);
+void line_tabulation(terminal_t *terminal);
+void line_carriage_return(cursor_t *cursor);
+void line_backspace(cursor_t *cursor);
+void line_vertical_tab(terminal_t *terminal);
 void update_cursor(const cursor_t *cursor);
 void enable_cursor(const cursor_t *cursor);
 void disable_cursor(const cursor_t *cursor);
@@ -70,3 +80,4 @@ size_t putnbr_base(terminal_t* terminal, int nb, const char *base);
 size_t putnbr_base_u(terminal_t* terminal, size_t nb, const char *base);
 
 uint8_t inb(uint16_t port);
+void change_screen(terminal_t *terminal, size_t new_screen);
