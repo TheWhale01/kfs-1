@@ -6,3 +6,7 @@ julo.*
 *.json
 .cache/
 !julo.h
+cross/
+gcc/
+gcc-build/
+binutils-gdb/

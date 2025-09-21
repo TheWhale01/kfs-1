@@ -1,4 +1,4 @@
-CC=gcc
+CC=./opt/cross/bin/i386-elf-gcc
 AR=ar rc
 CASM=nasm
 LIB_ASM=asm.a
@@ -51,9 +51,12 @@ run:
 run_kernel:
 	qemu-system-i386 -kernel $(NAME)
 
+run_debug:
+	qemu-system-i386 -cdrom $(NAME_ISO) -s -S
+
 sanitize: fclean
 sanitize: CFLAGS=-fno-builtin -fno-exceptions -fno-stack-protector -nostdlib \
-	-nodefaultlibs -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+	-nodefaultlibs -std=gnu99 -ffreestanding -O2 -Wall -Wextra -g
 sanitize: $(NAME)
 
 clean:

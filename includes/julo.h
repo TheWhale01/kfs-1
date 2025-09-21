@@ -22,6 +22,8 @@
 #define HEX_BASE "0123456789abcdef"
 #define HEX_BASE_UPPER "0123456789ABCDEF"
 
+#define IDT_SIZE 256
+
 typedef enum {
 	VGA_COLOR_BLACK = 0,
 	VGA_COLOR_BLUE = 1,
@@ -52,6 +54,28 @@ typedef struct {
     volatile const size_t addr2;
 } cursor_t;
 
+// https://wiki.osdev.org/Interrupt_Descriptor_Table
+// __attribute__((packed)) means that the compiler will compile the structure as
+// is in assembly without any sort of optimization. This will ensure the good
+// functioning of the structure
+typedef struct {
+    uint16_t offset_1;
+    uint16_t selector;
+    uint8_t zero;
+    uint8_t type_attributes;
+    uint16_t offset_2;
+} __attribute((packed)) idt_entry_t;
+
+typedef struct {
+    uint16_t limit;
+    uint32_t base;
+} __attribute__((packed)) idt_ptr_t;
+
+typedef struct {
+    idt_ptr_t *ptr;
+    idt_entry_t *entries[IDT_SIZE];
+} idt_t;
+
 typedef struct {
     cursor_t *cursor;
 	size_t screen;
@@ -61,17 +85,20 @@ typedef struct {
 	uint16_t VGA_SCREEN[4][VGA_WIDTH * VGA_HEIGHT];
 } terminal_t;
 
+void initIDT(idt_t *idt);
 void scroll(terminal_t *terminal);
+void line_backspace(cursor_t *cursor);
 void line_break(terminal_t *terminal);
 void outb(uint16_t port, uint8_t val);
 void line_tabulation(terminal_t *terminal);
-void line_carriage_return(cursor_t *cursor);
-void line_backspace(cursor_t *cursor);
-void line_vertical_tab(terminal_t *terminal);
 void update_cursor(const cursor_t *cursor);
 void enable_cursor(const cursor_t *cursor);
+void line_carriage_return(cursor_t *cursor);
 void disable_cursor(const cursor_t *cursor);
+void line_vertical_tab(terminal_t *terminal);
 void vga_putchar(terminal_t *terminal, char c);
+void change_screen(terminal_t *terminal, size_t new_screen);
+void setIDTGate(uint8_t num, uint32_t base, uint16_t selector, uint8_t flags);
 
 size_t printaddr(terminal_t *terminal, const void *p);
 size_t printk(terminal_t *terminal, const char *s, ...);
@@ -80,4 +107,3 @@ size_t putnbr_base(terminal_t* terminal, int nb, const char *base);
 size_t putnbr_base_u(terminal_t* terminal, size_t nb, const char *base);
 
 uint8_t inb(uint16_t port);
-void change_screen(terminal_t *terminal, size_t new_screen);

@@ -4,12 +4,6 @@
 #define H 25
 #define N (W*H)
 
-// void* memset(void* dst, int c, size_t n) {
-//     unsigned char* p = (unsigned char*)dst;
-//     while (n--) *p++ = (unsigned char)c;
-//     return dst;
-// }
-
 void make_pattern_2000(char out[N + 1])
 {
 	for (size_t y = 0; y < H; ++y)
@@ -19,6 +13,13 @@ void make_pattern_2000(char out[N + 1])
 			out[y*W + x] = ch;
 	}
 	out[N] = '\0';
+}
+
+bool is_protected_mode(void) {
+    size_t cr0;
+
+    __asm__ volatile ("mov %%cr0, %0" : "=r"(cr0));
+    return cr0 & 1;
 }
 
 int kernel_main(void) {
@@ -43,7 +44,6 @@ int kernel_main(void) {
 	for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
 		terminal.VGA_MEMORY[i] = (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
 	enable_cursor(terminal.cursor);
-	
 
 
 
@@ -55,6 +55,7 @@ int kernel_main(void) {
 	change_screen(&terminal, 2);
 	vga_putstring(&terminal, "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss\t");
 	change_screen(&terminal, 0);
+	printk(&terminal, "DEBUG: %d\n", is_protected_mode());
 	// for (int i = 0; i < 80; i++)
 		// vga_putstring(&terminal, "1");
 	//vga_putstring(&terminal, "\r");
