@@ -4,12 +4,6 @@
 #define H 25
 #define N (W*H)
 
-// void* memset(void* dst, int c, size_t n) {
-//     unsigned char* p = (unsigned char*)dst;
-//     while (n--) *p++ = (unsigned char)c;
-//     return dst;
-// }
-
 void make_pattern_2000(char out[N + 1])
 {
 	for (size_t y = 0; y < H; ++y)
@@ -22,6 +16,7 @@ void make_pattern_2000(char out[N + 1])
 }
 
 int kernel_main(void) {
+	init_gdt();
     cursor_t cursor = {
 		.x = 0, .y = 0,
         .start = 15, .end = 15,
@@ -46,8 +41,6 @@ int kernel_main(void) {
 	
 
 
-
-
 	char s2000[80*25 + 1];
 	make_pattern_2000(s2000);
 	vga_putstring(&terminal, s2000);
@@ -55,15 +48,25 @@ int kernel_main(void) {
 	change_screen(&terminal, 2);
 	vga_putstring(&terminal, "ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss\t");
 	change_screen(&terminal, 0);
-	// for (int i = 0; i < 80; i++)
-		// vga_putstring(&terminal, "1");
-	//vga_putstring(&terminal, "\r");
-	// for (int i = 0; i < 80; i++)
-	// 	vga_putstring(&terminal, "2");
-
-	// for (int i = 0; i < 160; i++)
-	// 	vga_putstring(&terminal, "2");
-    // printk(&terminal, KERN_EMERG "%p\n", &cursor);
+	for (int i = 0; i < 80; i++)
+		vga_putstring(&terminal, "1");
+	vga_putstring(&terminal, "\r");
+	for (int i = 0; i < 80; i++)
+		vga_putstring(&terminal, "2");
+	int n = 67;
+    uint32_t* esp;
+    asm volatile ("mov %%esp, %0" : "=r"(esp));
+    printk(&terminal, "\nKernel stack dump (top %d):\n\n", n - 1);
+  	for (int i = 1; i < n; i++)
+	{
+		printk(&terminal, " 0X%X   ", (uint32_t)(esp + i));
+		if (i % 6 == 0)
+			printk(&terminal, "\n\n");
+	}
+	// // for (int i = 0; i < 160; i++)
+	// // 	vga_putstring(&terminal, "2");
+    // printk(&terminal, "GDT address: %x\n", (uint32_t)gdt_entries);
+	// printk(&terminal, "GDT address: %x\n", (uint32_t)gdt_entries);
     // printk(&terminal, KERN_ALERT "%d\n", 13);
     // printk(&terminal, KERN_CRIT "%i\n", 12356543);
     // printk(&terminal, KERN_ERR "%u\n", 4294967295);

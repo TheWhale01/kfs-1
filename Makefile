@@ -1,4 +1,4 @@
-CC=gcc
+CC=i386-elf-gcc
 AR=ar rc
 CASM=nasm
 LIB_ASM=asm.a
@@ -16,11 +16,11 @@ NAME_ISO=$(subst .elf,.iso,$(NAME))
 BOOT_DIR=$(addsuffix /boot,$(ISO_DIR))
 GRUB_DIR=$(addsuffix /grub,$(BOOT_DIR))
 
-ASM_SRCS=$(addprefix $(SRC_DIR), boot.s)
+ASM_SRCS=$(addprefix $(SRC_DIR), boot.s gdts.s)
 ASM_OBJS=$(patsubst $(SRC_DIR)%.s, $(OBJ_DIR)%.o, $(ASM_SRCS))
 
 SRCS= $(addprefix $(SRC_DIR), main.c vga.c printk.c cursor.c printaddr.c putnbr.c \
-	inb.c outb.c)
+	inb.c outb.c gdt.c)
 DEP= $(patsubst $(SRC_DIR)%.c, $(DEP_DIR)%.d, $(SRCS))
 OBJS= $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
 
