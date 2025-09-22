@@ -90,5 +90,6 @@ size_t printk(terminal_t *terminal, const char *s, ...) {
         s++;
     }
     va_end(args);
+    terminal->fcolor = VGA_COLOR_WHITE;
     return len;
 }

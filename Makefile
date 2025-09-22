@@ -52,7 +52,7 @@ run_kernel:
 	qemu-system-i386 -kernel $(NAME)
 
 run_debug:
-	qemu-system-i386 -cdrom $(NAME_ISO) -s -S
+	qemu-system-i386 -s -S $(NAME_ISO)
 
 sanitize: fclean
 sanitize: CFLAGS=-fno-builtin -fno-exceptions -fno-stack-protector -nostdlib \

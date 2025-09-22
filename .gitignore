@@ -10,3 +10,4 @@ cross/
 gcc/
 gcc-build/
 binutils-gdb/
+.vscode/

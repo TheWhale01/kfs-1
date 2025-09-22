@@ -1,13 +1,12 @@
 #include <stddef.h>
+#include <stdint.h>
 
 void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
-	char		*tab_dest;
-	const char	*tab_src;
+    uint8_t *d = (uint8_t *)dest;
+    const uint8_t *s = (const uint8_t *)src;
 
-	tab_src = (char *)src;
-	tab_dest = (char *)dest;
 	while (n--)
-		*(tab_dest++) = *(tab_src++);
+		*(d++) = *(s++);
 	return (dest);
 }

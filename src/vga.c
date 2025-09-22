@@ -1,4 +1,5 @@
 #include "julo.h"
+#include "libft.h"
 
 static inline void vga_entry(const terminal_t *terminal, unsigned char c) {
 	terminal->VGA_MEMORY[terminal->cursor->y * VGA_WIDTH + terminal->cursor->x]
@@ -66,11 +67,15 @@ void change_screen(terminal_t *terminal, size_t new_screen) {
 		return ;
 	terminal->cursor->VGA_X[terminal->screen] = terminal->cursor->x;
 	terminal->cursor->VGA_Y[terminal->screen] = terminal->cursor->y;
-	for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
-		terminal->VGA_SCREEN[terminal->screen][i] = terminal->VGA_MEMORY[i];
+	ft_memcpy(terminal->VGA_SCREEN[terminal->screen],
+	    (const char *)terminal->VGA_MEMORY, VGA_WIDTH * VGA_HEIGHT);
+	// for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
+	// 	terminal->VGA_SCREEN[terminal->screen][i] = terminal->VGA_MEMORY[i];
 
 	terminal->screen = new_screen;
 
+	// DOES NOT WORK !!
+	// ft_memcpy(terminal->VGA_MEMORY, terminal->VGA_SCREEN[terminal->screen], VGA_WIDTH * VGA_HEIGHT);
 	for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
 		terminal->VGA_MEMORY[i] = terminal->VGA_SCREEN[new_screen][i];
 	terminal->cursor->x = terminal->cursor->VGA_X[new_screen];

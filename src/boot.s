@@ -36,6 +36,7 @@ align 8
 gdt_start:
     dq 0x0000000000000000       ; null descriptor
 
+    ; Kernel Code
     dw 0xFFFF                   ; limit low
     dw 0x0000                   ; base low
     db 0x00                     ; base middle
@@ -43,7 +44,7 @@ gdt_start:
     db 11001111b                ; granularity: 4K, 32-bit, limit high (magic number)
     db 0x00                     ; base high
 
-    ; data descriptor
+    ; Kernel Data
     dw 0xFFFF
     dw 0x0000
     db 0x00

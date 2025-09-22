@@ -8,6 +8,7 @@
 
 #define VGA_HEIGHT 25
 #define VGA_WIDTH 80
+#define NB_SCREEN 4
 
 #define KERN_EMERG "0"
 #define KERN_ALERT "1"
@@ -46,8 +47,8 @@ typedef enum {
 typedef struct {
     size_t x;
     size_t y;
-	size_t VGA_X[4];
-	size_t VGA_Y[4];
+	size_t VGA_X[NB_SCREEN];
+	size_t VGA_Y[NB_SCREEN];
     const uint8_t end;
     const uint8_t start;
     volatile const size_t addr1;
@@ -82,7 +83,7 @@ typedef struct {
     uint16_t fcolor;
     uint16_t bcolor;
     volatile uint16_t* const VGA_MEMORY;
-	uint16_t VGA_SCREEN[4][VGA_WIDTH * VGA_HEIGHT];
+	uint16_t VGA_SCREEN[NB_SCREEN][VGA_WIDTH * VGA_HEIGHT];
 } terminal_t;
 
 void initIDT(idt_t *idt);
