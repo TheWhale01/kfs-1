@@ -1,4 +1,4 @@
-CC=../../opt/cross/bin/i386-elf-gcc
+CC=i386-elf-gcc
 BIN_DIR=bin/
 OBJ_DIR=obj/
 SRC_DIR=src/

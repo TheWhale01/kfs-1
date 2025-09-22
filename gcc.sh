@@ -1,4 +1,4 @@
-sudo apt install -y build-essential bison flex libgmp3-dev libmpc-dev libmfr-dev texinfo libisl-dev
+# sudo apt install -y build-essential bison flex libgmp3-dev libmpc-dev libmfr-dev texinfo libisl-dev
 
 export PREFIX="$PWD/opt/cross"
 export TARGET=i386-elf
@@ -20,8 +20,8 @@ cd ..
 
 which -- $TARGET-as || echo $TARGET-as is not in the PATH
 
-mkdir -p gcc-build
-cd gcc-build
+mkdir -p build-gcc
+cd build-gcc
 ../gcc/configure --target=$TARGET --prefix="$PREFIX" --disable-nls --enable-languages=c,c++ --without-headers
 make all-gcc
 make all-target-libgcc

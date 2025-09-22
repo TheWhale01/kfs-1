@@ -1,9 +1,8 @@
-CC=./opt/cross/bin/i386-elf-gcc
+CC=i386-elf-gcc
 AR=ar rc
 CASM=nasm
 LIB_ASM=asm.a
 OBJ_DIR=obj/
-DEP_DIR=dep/
 SRC_DIR=src/
 ISO_DIR=bin
 LIBFT_DIR=./src/libft
@@ -16,11 +15,10 @@ NAME_ISO=$(subst .elf,.iso,$(NAME))
 BOOT_DIR=$(addsuffix /boot,$(ISO_DIR))
 GRUB_DIR=$(addsuffix /grub,$(BOOT_DIR))
 
-ASM_SRCS=$(addprefix $(SRC_DIR), boot.s)
+ASM_SRCS=$(addprefix $(SRC_DIR), boot.s gdts.s)
 ASM_OBJS=$(patsubst $(SRC_DIR)%.s, $(OBJ_DIR)%.o, $(ASM_SRCS))
 
-SRCS= $(addprefix $(SRC_DIR), main.c vga.c printk.c cursor.c printaddr.c putnbr.c \
-	inb.c outb.c)
+SRCS= $(addprefix $(SRC_DIR), main.c terminal.c printk.c cursor.c inb.c outb.c gdt.c)
 DEP= $(patsubst $(SRC_DIR)%.c, $(DEP_DIR)%.d, $(SRCS))
 OBJS= $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
 
@@ -29,8 +27,7 @@ CFLAGS=-fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlib
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	@mkdir -p $(dir $@)
-	@mkdir -p $(subst $(OBJ_DIR), $(DEP_DIR), $(dir $@))
-	$(CC) $(CFLAGS) -MMD -MP -MF $(patsubst $(OBJ_DIR)%.o, $(DEP_DIR)%.d, $@) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.s
 	$(CASM) $(ASM_FLAGS) $< -o $@
@@ -61,7 +58,6 @@ sanitize: $(NAME)
 
 clean:
 	$(MAKE) -C $(LIBFT_DIR) clean
-	rm -rf $(OBJ_DIR) $(DEP_DIR) $(ISO_DIR)
 
 fclean: clean
 	$(MAKE) -C $(LIBFT_DIR) fclean
@@ -70,7 +66,5 @@ fclean: clean
 	# docker compose down
 
 re: fclean all
-
--include $(DEP)
 
 .PHONY: all clean fclean re sanitize run run_kernel
