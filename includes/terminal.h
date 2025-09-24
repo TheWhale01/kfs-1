@@ -35,4 +35,5 @@ typedef struct {
 
 extern terminal_t terminal;
 
-void initTerminal(void);
+void clearscr(void);
+void init_terminal(void);

@@ -1,4 +1,5 @@
 #include "julo.h"
+#include "terminal.h"
 
 static inline unsigned char hex_digit(int v) {
     if (v >= 0 && v < 10)
@@ -134,6 +135,28 @@ size_t printk(const char *s, ...) {
 
     va_start(args, s);
     len += print_log_level(*s);
+    s += len;
+    while (*s) {
+        while (*s == '%') {
+            len += print_arg(++s, args);
+            s++;
+        }
+        if (!*s)
+            break;
+        vga_putchar(*s);
+        len++;
+        s++;
+    }
+    va_end(args);
+    terminal.fcolor = VGA_COLOR_WHITE;
+    return len;
+}
+
+size_t printf(const char *s, ...) {
+    size_t len = 0;
+    va_list args;
+
+    va_start(args, s);
     s += len;
     while (*s) {
         while (*s == '%') {

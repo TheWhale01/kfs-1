@@ -1,6 +1,6 @@
 #include "cursor.h"
+#include "terminal.h"
 #include "julo.h"
-#include "libft.h"
 
 terminal_t terminal = {
 	.screen = 0,
@@ -81,12 +81,18 @@ void change_screen(size_t new_screen) {
 	update_cursor();
 }
 
-void initTerminal(void) {
+void init_terminal(void) {
     for (size_t i = 0; i < NB_SCREEN; i++)
 		cursor.VGA_X[i] = 0, cursor.VGA_Y[i] = 0;
 	for (size_t i = 0; i < NB_SCREEN; i++)
         ft_memset(terminal.VGA_SCREEN,
             (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8, VGA_WIDTH * VGA_HEIGHT);
-	for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
-		terminal.VGA_MEMORY[i] = (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
+	clearscr();
+}
+
+void clearscr() {
+    cursor.VGA_X[terminal.screen] = 0;
+    cursor.VGA_Y[terminal.screen] = 0;
+    for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
+        terminal.VGA_MEMORY[i] = (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
 }

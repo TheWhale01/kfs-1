@@ -1,5 +1,7 @@
-#include "cursor.h"
 #include "julo.h"
+#include "cursor.h"
+#include "gdt.h"
+#include "idt.h"
 #include "terminal.h"
 
 void make_pattern_2000(char *out)
@@ -14,13 +16,15 @@ void make_pattern_2000(char *out)
 }
 
 int kernel_main(void) {
-    char s2000[VGA_WIDTH * VGA_HEIGHT + 1];
 	init_gdt();
-	initTerminal();
-	initCursor();
+	init_idt();
+	init_terminal();
+	init_cursor();
+	char s2000[VGA_WIDTH * VGA_HEIGHT + 1];
 
 	// term 0
 	printk("bonsoir je ne suis pas moi\n");
+	printf("42\n");
 
 	// term 1
 	change_screen(1);
@@ -53,5 +57,7 @@ int kernel_main(void) {
     printk(KERN_INFO "%x\n", 15);
     printk(KERN_DEBUG "%X\n", 15);
     printk("IMPOSTEUR: %%");
+    printf("ERROR: %d", 1 / 0);
+    // asm volatile ("int $0x2");
     return (0);
 }

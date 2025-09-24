@@ -14,4 +14,4 @@ typedef struct {
 
 extern cursor_t cursor;
 
-void initCursor(void);
+void init_cursor(void);

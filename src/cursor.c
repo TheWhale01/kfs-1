@@ -1,5 +1,6 @@
 #include "julo.h"
 #include "terminal.h"
+#include "cursor.h"
 
 cursor_t cursor = {
    .start = 15, .end = 15,
@@ -69,7 +70,7 @@ void update_cursor(void) {
 	outb(cursor.addr2, (uint8_t)((pos >> 8) & 0xFF));
 }
 
-void initCursor(void) {
+void init_cursor(void) {
     ft_bzero(cursor.VGA_X, NB_SCREEN);
     ft_bzero(cursor.VGA_Y, NB_SCREEN);
     enable_cursor();
