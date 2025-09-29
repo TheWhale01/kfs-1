@@ -1,6 +1,9 @@
 #pragma once
 
 #include <stddef.h>
+#include <stdbool.h>
+#include <stdint.h>
+
 
 int			ft_tolower(int c);
 int			ft_toupper(int c);

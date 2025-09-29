@@ -70,5 +70,8 @@ int kernel_main(void) {
     //     : "=a"(q)                 /* sortie : quotient dans EAX */
     //     : "r"(a), "r"(d)          /* entrées */
     // );
+    int a = 10;
+    int b = 20;
+    printk("allo: %d\nbonsoir: %d\n", a, b);
     return (0);
 }

@@ -9,9 +9,6 @@ void init_keyboard(void) {
 }
 
 void keyboard_handler(int_regs_t *regs) {
-    (void)regs;
-    uint8_t scancode = inb(0x60) & 0x7F;
-    uint8_t pressed = inb(0x60) & 0x80;
-
-    printf("Scancode: %d\nPressed: %d\n", scancode, pressed);
+    static volatile bool pressed = true;
+    uint8_t code = inb(0x60);
 }
