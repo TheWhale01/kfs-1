@@ -2,7 +2,6 @@ global load_idt
 load_idt:
     mov eax, [esp + 4]
     lidt [eax]
-    sti
     ret
 
 %macro ISR_NOERRORCODE 1
@@ -52,3 +51,8 @@ isr_common_stub:
     add esp, 8
     sti
     iret
+
+global enable_interrupts
+enable_interrupts:
+    sti
+    ret

@@ -3,6 +3,12 @@
 #include <stddef.h>
 
 #define IDT_ENTRY_SIZE 256
+#define IRQ_ROUTINE_SIZE 16
+
+#define PIC1_COMMAND_PORT   0x20
+#define PIC1_DATA_PORT      0x21
+#define PIC2_COMMAND_PORT   0xA0
+#define PIC2_DATA_PORT      0xA1
 
 // https://wiki.osdev.org/Interrupt_Descriptor_Table
 // __attribute__((packed)) means that the compiler will compile the structure as
@@ -42,13 +48,35 @@ typedef enum {
     IDT_FLAG_PRESENT            = 0x80,
 } idt_flags_e;
 
+typedef enum {
+    PIC_ICW1_ICW4           = 0x01,
+    PIC_ICW1_INITIALIZE     = 0x10,
+} pic_icw1_e;
+
+typedef enum {
+    PIC_ICW4_8096                   = 0x1,
+    PIC_ICW4_AUTO_EOI               = 0x2,
+    PIC_ICW4_BUFFER_MASTER          = 0x4,
+    PIC_ICW4_BUFFER_SLAVE           = 0x0,
+    PIC_ICW4_BUFFERED               = 0x8,
+    PIC_ICW4_SFNM                   = 0x10
+} pic_icw4_e;
+
+typedef enum {
+    PIC_CMD_EOI = 0x20,
+} pic_cmd_e;
+
 extern idt_entry_t idt_entries[IDT_ENTRY_SIZE];
 extern idt_ptr_t   idt_ptr;
+extern void        *irq_routines[IRQ_ROUTINE_SIZE];
+
 
 void init_idt(void);
 void init_idt_gates(void);
 void enable_idt_gate(int int_nb);
 void disable_idt_gate(int int_nb);
+void irq_uninstall_handler(int irq);
+void irq_install_handler(int irq, void (*handler)(int_regs_t *regs));
 void set_idt_gate(uint8_t num, void *base, uint16_t selector, uint8_t flags);
 
 void isr_handler(int_regs_t *regs);

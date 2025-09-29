@@ -20,6 +20,7 @@ void vga_putchar(char c) {
 			line_break();
 			return ;
 		case '\a':
+		    // Need to make a sound driver
 			return ;
 		case '\b':
 			line_backspace();
@@ -87,7 +88,8 @@ void init_terminal(void) {
 	for (size_t i = 0; i < NB_SCREEN; i++)
         ft_memset(terminal.VGA_SCREEN,
             (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8, VGA_WIDTH * VGA_HEIGHT);
-	clearscr();
+	for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
+        terminal.VGA_MEMORY[i] = (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
 }
 
 void clearscr() {
@@ -95,4 +97,5 @@ void clearscr() {
     cursor.VGA_Y[terminal.screen] = 0;
     for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
         terminal.VGA_MEMORY[i] = (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
+    ft_memcpy(terminal.VGA_SCREEN[terminal.screen], (const char *)terminal.VGA_MEMORY, VGA_WIDTH * VGA_HEIGHT);
 }

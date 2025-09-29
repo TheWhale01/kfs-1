@@ -4,41 +4,51 @@
 #include <stdint.h>
 
 extern void load_idt(uint32_t);
+extern void enable_interrupts(void);
 
 idt_entry_t idt_entries[IDT_ENTRY_SIZE];
 idt_ptr_t idt_ptr;
+void *irq_routines[IRQ_ROUTINE_SIZE];
+
+static void configure_pic(uint8_t offset1, uint8_t offset2) {
+    // Init control word 1
+    outb(PIC1_COMMAND_PORT, PIC_ICW1_ICW4 | PIC_ICW1_INITIALIZE);
+    outb(PIC2_COMMAND_PORT, PIC_ICW1_ICW4 | PIC_ICW1_INITIALIZE);
+
+    // Init control word 2
+    outb(PIC1_DATA_PORT, offset1);
+    outb(PIC2_DATA_PORT, offset2);
+
+    // Init control word 3
+    outb(PIC1_DATA_PORT, 0x4);
+    outb(PIC2_DATA_PORT, 0x2);
+
+    // Init control word 4
+    outb(PIC1_DATA_PORT, PIC_ICW4_8096);
+    outb(PIC2_DATA_PORT, PIC_ICW4_8096);
+
+    // clear data ports
+    outb(PIC1_DATA_PORT, 0);
+    outb(PIC2_DATA_PORT, 0);
+
+    // Mask IRQ0 (No PIT)
+    uint8_t mask = inb(PIC1_DATA_PORT);
+    mask |= 0x01;
+    outb(PIC1_DATA_PORT, mask);
+}
 
 void init_idt() {
     idt_ptr.limit = sizeof(idt_entry_t) * IDT_ENTRY_SIZE - 1;
     idt_ptr.base = (uint32_t)&idt_entries;
     ft_bzero(idt_entries, sizeof(idt_entry_t) * IDT_ENTRY_SIZE);
+    ft_bzero(irq_routines, IRQ_ROUTINE_SIZE);
 
     load_idt((uint32_t)&idt_ptr);
     init_idt_gates();
     for (size_t i = 0; i < IDT_ENTRY_SIZE; i++)
         enable_idt_gate(i);
-
-    // Initialization du PIC
-    // 0x20 Maitre commande
-    // 0xA0 Maitre data
-    // 0x21 Esclave commande
-    // 0xA1 Esclave data
-    // outb(0x20, 0x11);
-    // outb(0xA0, 0x11);
-
-    // outb(0x21, 0x20);
-    // outb(0xA1, 0x28);
-
-    // outb(0x21, 0x04);
-    // outb(0xA1, 0x02);
-
-    // outb(0x21, 0x01);
-    // outb(0xA1, 0x01);
-
-    // outb(0x21, 0x0);
-    // outb(0xA1, 0x0);
-
-    // init_idt_gates();
+    configure_pic(0x20, 0x28);
+    enable_interrupts();
 }
 
 void set_idt_gate(uint8_t num, void *base, uint16_t selector, uint8_t flags) {
@@ -50,10 +60,35 @@ void set_idt_gate(uint8_t num, void *base, uint16_t selector, uint8_t flags) {
 }
 
 void isr_handler(int_regs_t *regs) {
-    (void)regs;
-    clearscr();
-    printf("Une interruption est arrivee !\n");
-    while (true);
+    const char *exception_msg[] = { "Division By Zero", "Debug"," Non Maskable Interrupt",
+        "Breakpoint", "Into Detected Overflow", "Out of Bounds", "Invalid Opcode",
+        "No Coprocessor", "Double fault", "Coprocessor Segment Overrun", "Bad TSS",
+        "Segment not present", "Stack fault", "General protection fault", "Page fault",
+        "Unknown Interrupt", "Coprocessor Fault", "Alignment Fault", "Machine Check",
+        "Reserved", "Reserved", "Reserved", "Reserved", "Reserved", "Reserved",
+        "Reserved", "Reserved", "Reserved", "Reserved", "Reserved", "Reserved", "Reserved"
+    };
+    if (regs->int_nb < 32) {
+        // Interruption is an excpetion
+        clearscr();
+        printf("System Halted!\nException: %d\n", regs->int_nb);
+        printf("%s", exception_msg[regs->int_nb]);
+        while(true);
+    }
+    else if (regs->int_nb >= 32 && regs->int_nb <= 47) {
+        // Interruption is an IRQ
+        void (*handler)(int_regs_t *regs);
+
+        handler = irq_routines[regs->int_nb - 32];
+        if (!handler) {
+            printf("Unknown handler for interrupt request: %d", regs->int_nb);
+            return ;
+        }
+        handler(regs);
+        if (regs->int_nb >= 40)
+            outb(PIC2_COMMAND_PORT, PIC_CMD_EOI);
+        outb(PIC1_COMMAND_PORT, PIC_CMD_EOI);
+    }
 }
 
 void enable_idt_gate(int int_nb) {
@@ -62,4 +97,12 @@ void enable_idt_gate(int int_nb) {
 
 void disable_idt_gate(int int_nb) {
     UNSET_FLAG(idt_entries[int_nb].type_attributes, IDT_FLAG_PRESENT);
+}
+
+void irq_install_handler(int irq, void (*handler)(int_regs_t *regs)) {
+    irq_routines[irq] = handler;
+}
+
+void irq_uninstall_handler(int irq) {
+    irq_routines[irq] = 0;
 }
