@@ -9,38 +9,41 @@ terminal_t terminal = {
    .VGA_MEMORY = (volatile uint16_t* const)0xB8000,
 };
 
-static inline void vga_entry(unsigned char c) {
+inline void vga_entry(unsigned char c) {
 	terminal.VGA_MEMORY[cursor.VGA_Y[terminal.screen] * VGA_WIDTH + cursor.VGA_X[terminal.screen]]
         = (uint16_t)c | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
 }
 
-void vga_putchar(char c) {
-	switch (c) {
+bool check_echappement(char c) {
+	switch (c)
+	{
 		case '\n':
 			line_break();
-			return ;
+			return (true);
 		case '\a':
-		    // Need to make a sound driver
-			return ;
+			return (true);
 		case '\b':
 			line_backspace();
-			vga_entry(' ');
-			return;
+			return (true);
 		case '\t':
 			line_tabulation();
-			return ;
+			return (true);
 		case '\r':
 			line_carriage_return();
-			return ;
+			return (true);
 		case '\v':
 		case '\f':
 			line_vertical_tab();
-			return;
+			return (true);
 		default:
-			break;
+			return (false);
 	}
+}
+
+void vga_putchar(char c) {
+	check_echappement(c);
 	vga_entry(c);
-	if (++(cursor.VGA_X[terminal.screen]) >= VGA_WIDTH) {
+	if (++cursor.VGA_X[terminal.screen] >= VGA_WIDTH) {
 		cursor.VGA_X[terminal.screen] = 0;
 		if (cursor.VGA_Y[terminal.screen] == VGA_HEIGHT - 1)
 			scroll();

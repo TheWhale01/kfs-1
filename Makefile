@@ -24,7 +24,7 @@ DEP= $(patsubst $(SRC_DIR)%.c, $(DEP_DIR)%.d, $(SRCS))
 OBJS= $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
 
 CFLAGS=-fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs \
-	-std=gnu99 -ffreestanding -O2 -Wall -Wextra -m32 -I $(INCLUDES) -g
+	-std=gnu99 -ffreestanding -Wall -Wextra -m32 -I $(INCLUDES) -g
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	@mkdir -p $(dir $@)

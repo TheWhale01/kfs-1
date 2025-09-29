@@ -36,12 +36,15 @@ void line_vertical_tab(void) {
 void line_backspace(void) {
 	if (cursor.VGA_X[terminal.screen] == 0 && cursor.VGA_Y[terminal.screen] == 0)
 		return ;
-	cursor.VGA_X[terminal.screen]--;
-	if (cursor.VGA_X[terminal.screen] == 0) {
+	if (cursor.VGA_X[terminal.screen] != 0)
+		cursor.VGA_X[terminal.screen]--;
+	else
+	{
 		cursor.VGA_X[terminal.screen] = VGA_WIDTH - 1;
 		cursor.VGA_Y[terminal.screen]--;
 	}
 	update_cursor();
+	vga_entry(' ');
 }
 
 void line_carriage_return(void) {

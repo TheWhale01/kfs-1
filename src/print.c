@@ -1,5 +1,6 @@
 #include "julo.h"
 #include "terminal.h"
+#include "libft.h"
 
 static inline unsigned char hex_digit(int v) {
     if (v >= 0 && v < 10)
@@ -90,34 +91,34 @@ static size_t print_log_level(char c) {
     return 1;
 }
 
-static size_t print_arg(const char *s, va_list args) {
+static size_t print_arg(const char *s, va_list *args) {
     size_t len = 0;
 
     switch (*s) {
         case 'c':
-            vga_putchar((char)va_arg(args, int));
+            vga_putchar(va_arg(*args, int));
             len++;
             break;
         case 's':
-            len += vga_putstring(va_arg(args, char*));
+            len += vga_putstring(va_arg(*args, char*));
             break;
         case 'p':
-            len += printaddr(va_arg(args, void*));
+            len += printaddr(va_arg(*args, void*));
             break;
         case 'd':
-            len += putnbr_base(va_arg(args, int), DEC_BASE);
-            break;
         case 'i':
-            len += putnbr_base(va_arg(args, int), DEC_BASE);
+            len += putnbr_base(va_arg(*args, int), DEC_BASE);
             break;
         case 'u':
-            len += putnbr_base_u(va_arg(args, size_t), DEC_BASE);
+            len += putnbr_base_u(va_arg(*args, size_t), DEC_BASE);
             break;
         case 'x':
-            len += putnbr_base(va_arg(args, size_t), HEX_BASE);
+            vga_putstring("0x");
+            len += putnbr_base(va_arg(*args, size_t), HEX_BASE) + 2;
             break;
         case 'X':
-            len += putnbr_base(va_arg(args, size_t), HEX_BASE_UPPER);
+            vga_putstring("0x");
+            len += putnbr_base(va_arg(*args, size_t), HEX_BASE_UPPER) + 2;
             break;
         case '%':
             len++;
@@ -137,15 +138,18 @@ size_t printk(const char *s, ...) {
     len += print_log_level(*s);
     s += len;
     while (*s) {
-        while (*s == '%') {
-            len += print_arg(++s, args);
+        if (*s == '%') {
+            s++;
+            if (!*s)
+                break ;
+            len += print_arg(s, &args);
             s++;
         }
-        if (!*s)
-            break;
-        vga_putchar(*s);
-        len++;
-        s++;
+        else  {
+            vga_putchar(*s);
+            len++;
+            s++;
+        }
     }
     va_end(args);
     terminal.fcolor = VGA_COLOR_WHITE;
@@ -160,7 +164,7 @@ size_t printf(const char *s, ...) {
     s += len;
     while (*s) {
         while (*s == '%') {
-            len += print_arg(++s, args);
+            len += print_arg(++s, &args);
             s++;
         }
         if (!*s)

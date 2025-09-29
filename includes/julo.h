@@ -37,7 +37,7 @@ void change_screen(size_t new_screen);
 
 size_t printaddr(const void *p);
 size_t printk(const char *s, ...);
-size_t printf(const char *s, ...);
+size_t printf(const char *fmt, ...);
 size_t vga_putstring(const char *str);
 size_t putnbr_base(int nb, const char *base);
 size_t putnbr_base_u(size_t nb, const char *base);

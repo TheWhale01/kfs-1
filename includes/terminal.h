@@ -1,6 +1,7 @@
 #pragma once
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #define VGA_HEIGHT 25
 #define VGA_WIDTH 80
@@ -37,3 +38,6 @@ extern terminal_t terminal;
 
 void clearscr(void);
 void init_terminal(void);
+bool check_echappement(char c);
+void vga_entry(unsigned char c);
+
