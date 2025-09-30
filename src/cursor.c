@@ -7,6 +7,16 @@ cursor_t cursor = {
    .addr1 = 0x3D4, .addr2 = 0x3D5,
 };
 
+static int check_last_enter(void) {
+    int x = VGA_WIDTH;
+
+    while (--x >= 0) {
+        if ((terminal.VGA_MEMORY[cursor.VGA_Y[terminal.screen] * VGA_WIDTH + x] & 0x00FF) != ' ')
+            return x;
+    }
+    return 0;
+}
+
 void line_break(void) {
 	cursor.VGA_X[terminal.screen] = 0;
 	cursor.VGA_Y[terminal.screen]++;
@@ -40,8 +50,8 @@ void line_backspace(void) {
 		cursor.VGA_X[terminal.screen]--;
 	else
 	{
-		cursor.VGA_X[terminal.screen] = VGA_WIDTH - 1;
-		cursor.VGA_Y[terminal.screen]--;
+	    cursor.VGA_Y[terminal.screen]--;
+		cursor.VGA_X[terminal.screen] = check_last_enter();
 	}
 	update_cursor();
 	vga_entry(' ');
