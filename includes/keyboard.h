@@ -8,6 +8,7 @@ void keyboard_handler(int_regs_t *regs);
 #define SC_LSHIFT   0x2A
 #define SC_RSHIFT   0x36
 #define SC_ALT      0x38
+#define NEW_LINE    0x1C
 
 #define SCANCODE_INIT { \
   [0x02]='1',[0x03]='2',[0x04]='3',[0x05]='4',[0x06]='5',[0x07]='6',[0x08]='7',[0x09]='8', \

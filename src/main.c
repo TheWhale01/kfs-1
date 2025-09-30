@@ -29,7 +29,7 @@ int kernel_main(void) {
 	// printf("42\n");
 
 	// // term 1
-	// change_screen(1);
+
 	// for (size_t i = 0; i < VGA_WIDTH; i++)
     //     vga_putchar('A');
 	// make_pattern_2000(s2000);

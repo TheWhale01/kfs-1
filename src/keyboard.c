@@ -16,8 +16,10 @@ void init_keyboard(void) {
     irq_install_handler(1, &keyboard_handler);
 }
 
-void keyboard_handler(int_regs_t *regs) {
+void keyboard_handler(int_regs_t *regs)
+{
 	(void)regs;
+	int len;
 	keyboard.scancode = inb(0x60) & 0x7F;
 	keyboard.pressed = !(inb(0x60) & 0x80);
 	switch (keyboard.scancode) {
@@ -33,9 +35,19 @@ void keyboard_handler(int_regs_t *regs) {
 	}
 	if (keyboard.pressed)
 	{
-	    if (keyboard.alt_on && (keyboard.scancode - 1 >= 1 && keyboard.scancode - 1 <= 4))
+		if (keyboard.alt_on && (keyboard.scancode - 1 >= 1 && keyboard.scancode - 1 <= 4))
 			change_screen(keyboard.scancode - 2);
-		else if (!check_echappement(keyboard.SC_US[keyboard.scancode]) && !keyboard.alt_on)
-		    vga_putchar(keyboard.shift_on ? keyboard.SC_SHIFT[keyboard.scancode] : keyboard.SC_US[keyboard.scancode]);
+		else if (!check_echappement(keyboard.SC_US[keyboard.scancode]) && keyboard.SC_US[keyboard.scancode])
+		{
+			vga_putchar(keyboard.shift_on ? keyboard.SC_SHIFT[keyboard.scancode] : keyboard.SC_US[keyboard.scancode]);
+			len = ft_strlen(terminal.CMD_BUFFER[terminal.screen]);
+			if (len < VGA_WIDTH)
+					terminal.CMD_BUFFER[terminal.screen][len] = keyboard.shift_on ? keyboard.SC_SHIFT[keyboard.scancode] : keyboard.SC_US[keyboard.scancode];
+			else
+			{
+				ft_bzero(terminal.CMD_BUFFER[terminal.screen], VGA_WIDTH);
+				len = 0;
+			}
+		}
 	}
 }

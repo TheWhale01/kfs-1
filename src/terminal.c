@@ -14,11 +14,33 @@ inline void vga_entry(unsigned char c) {
         = (uint16_t)c | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
 }
 
+void stack() {
+	printf("HAHAHAHA LA COMMANDE");
+}
+
+// info
+//stack
+// void reboot();
+// void clear();
+// halt == poweroff
+// Parser espace
+// DEBUG message, ERROR message etc.
+// setcolor [red, blue; green]
+// screen [index]
+//gérer le backspace
+
+void handle_cmd() {
+	if (!ft_strcmp(terminal.CMD_BUFFER[terminal.screen], "stack"))
+		stack();
+	ft_bzero(terminal.CMD_BUFFER[terminal.screen], 80);
+}
+
 bool check_echappement(char c) {
 	switch (c)
 	{
 		case '\n':
 			line_break();
+			handle_cmd();
 			return (true);
 		case '\a':
 			return (true);
@@ -78,7 +100,7 @@ void change_screen(size_t new_screen) {
 	if (new_screen == terminal.screen)
 		return ;
 	ft_memcpy(terminal.VGA_SCREEN[terminal.screen],
-	    (const char *)terminal.VGA_MEMORY, VGA_WIDTH * VGA_HEIGHT);
+		(const char *)terminal.VGA_MEMORY, VGA_WIDTH * VGA_HEIGHT);
 	terminal.screen = new_screen;
 	for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
 		terminal.VGA_MEMORY[i] = terminal.VGA_SCREEN[new_screen][i];
@@ -86,19 +108,20 @@ void change_screen(size_t new_screen) {
 }
 
 void init_terminal(void) {
-    for (size_t i = 0; i < NB_SCREEN; i++)
+	for (size_t i = 0; i < NB_SCREEN; i++) {
 		cursor.VGA_X[i] = 0, cursor.VGA_Y[i] = 0;
-	for (size_t i = 0; i < NB_SCREEN; i++)
-        ft_memset(terminal.VGA_SCREEN,
-            (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8, VGA_WIDTH * VGA_HEIGHT);
+		ft_bzero(terminal.CMD_BUFFER[i], VGA_WIDTH);
+		for (size_t j = 0; j < VGA_WIDTH * VGA_HEIGHT; j++)
+			terminal.VGA_SCREEN[i][j] = (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
+	}
 	for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
-        terminal.VGA_MEMORY[i] = (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
+		terminal.VGA_MEMORY[i] = (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
 }
 
 void clearscr() {
-    cursor.VGA_X[terminal.screen] = 0;
-    cursor.VGA_Y[terminal.screen] = 0;
-    for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
-        terminal.VGA_MEMORY[i] = (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
-    ft_memcpy(terminal.VGA_SCREEN[terminal.screen], (const char *)terminal.VGA_MEMORY, VGA_WIDTH * VGA_HEIGHT);
+	cursor.VGA_X[terminal.screen] = 0;
+	cursor.VGA_Y[terminal.screen] = 0;
+	for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
+		terminal.VGA_MEMORY[i] = (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
+	ft_memcpy(terminal.VGA_SCREEN[terminal.screen], (const char *)terminal.VGA_MEMORY, VGA_WIDTH * VGA_HEIGHT);
 }

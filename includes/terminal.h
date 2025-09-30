@@ -31,6 +31,7 @@ typedef struct {
     uint16_t fcolor;
     uint16_t bcolor;
     volatile uint16_t* const VGA_MEMORY;
+	char CMD_BUFFER[NB_SCREEN][VGA_WIDTH];
 	uint16_t VGA_SCREEN[NB_SCREEN][VGA_WIDTH * VGA_HEIGHT];
 } terminal_t;
 
