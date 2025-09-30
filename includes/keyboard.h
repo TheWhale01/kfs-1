@@ -1,11 +1,13 @@
 #pragma once
 #include "idt.h"
+#include <stdbool.h>
 
 void init_keyboard(void);
 void keyboard_handler(int_regs_t *regs);
 
-#define SC_LSHIFT 0x2A
-#define SC_RSHIFT 0x36
+#define SC_LSHIFT   0x2A
+#define SC_RSHIFT   0x36
+#define SC_ALT      0x38
 
 #define SCANCODE_INIT { \
   [0x02]='1',[0x03]='2',[0x04]='3',[0x05]='4',[0x06]='5',[0x07]='6',[0x08]='7',[0x09]='8', \
@@ -28,3 +30,14 @@ void keyboard_handler(int_regs_t *regs);
   [0x2C]='Z',[0x2D]='X',[0x2E]='C',[0x2F]='V',[0x30]='B',[0x31]='N',[0x32]='M',[0x33]='<', \
   [0x34]='>',[0x35]='?',[0x39]=' ', [0x1C]='\n', [0x0E]='\b', [0x0F]='\t' \
 }
+
+typedef struct {
+    const char SC_US[128];//    = SCANCODE_INIT;
+	const char SC_SHIFT[128];// = SCANCODE_SHIFT_INIT;
+	bool shift_on;// = false;
+	bool alt_on;// = false;
+	uint8_t scancode;// = inb(0x60) & 0x7F;
+	bool pressed;// = !(inb(0x60) & 0x80);
+} keyboard_t;
+
+extern keyboard_t keyboard;

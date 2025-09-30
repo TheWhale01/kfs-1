@@ -12,7 +12,7 @@ static int check_last_enter(void) {
 
     while (--x >= 0) {
         if ((terminal.VGA_MEMORY[cursor.VGA_Y[terminal.screen] * VGA_WIDTH + x] & 0x00FF) != ' ')
-            return x;
+            return x + 1;
     }
     return 0;
 }
