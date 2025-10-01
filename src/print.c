@@ -49,10 +49,25 @@ size_t putnbr_base(int nb, const char *base) {
     return len;
 }
 
+size_t nb_digits(size_t nb, size_t base_len) {
+	size_t digits = 1;
+	while (nb >= base_len)
+	{
+		nb /= base_len;
+		digits++;
+	}
+	return digits;
+}
+
 size_t putnbr_base_u(size_t nb, const char *base) {
     size_t len = 0;
     size_t base_len = ft_strlen(base);
+	size_t pad = 8 - nb_digits(nb, base_len);
 
+	for (size_t i = 0; i < pad; i++) {
+		vga_putchar('0');
+		len++;
+	}
     if (nb / base_len)
         len = putnbr_base(nb / base_len, base);
     vga_putchar(base[nb % base_len]);
@@ -88,6 +103,7 @@ static size_t print_log_level(char c) {
     }
     c -= '0';
     terminal.fcolor = priority_color[(size_t)c];
+	terminal.bcolor = VGA_COLOR_BLACK;
     vga_putstring(priority_msg[(size_t)c]);
     return 1;
 }
@@ -115,11 +131,11 @@ static size_t print_arg(const char *s, va_list *args) {
             break;
         case 'x':
             vga_putstring("0x");
-            len += putnbr_base(va_arg(*args, size_t), HEX_BASE) + 2;
+            len += putnbr_base_u(va_arg(*args, size_t), HEX_BASE) + 2;
             break;
         case 'X':
             vga_putstring("0x");
-            len += putnbr_base(va_arg(*args, size_t), HEX_BASE_UPPER) + 2;
+            len += putnbr_base_u(va_arg(*args, size_t), HEX_BASE_UPPER) + 2;
             break;
         case '%':
             len++;
@@ -134,7 +150,8 @@ static size_t print_arg(const char *s, va_list *args) {
 size_t printk(const char *s, ...) {
     size_t len = 0;
     va_list args;
-
+	uint16_t save_fcolor = terminal.fcolor;
+	uint16_t save_bcolor = terminal.bcolor;
     va_start(args, s);
     len += print_log_level(*s);
     s += len;
@@ -153,7 +170,8 @@ size_t printk(const char *s, ...) {
         }
     }
     va_end(args);
-    terminal.fcolor = VGA_COLOR_WHITE;
+    terminal.fcolor = save_fcolor;
+    terminal.bcolor = save_bcolor;
     return len;
 }
 
