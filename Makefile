@@ -15,11 +15,11 @@ NAME_ISO=$(subst .elf,.iso,$(NAME))
 BOOT_DIR=$(addsuffix /boot,$(ISO_DIR))
 GRUB_DIR=$(addsuffix /grub,$(BOOT_DIR))
 
-ASM_SRCS=$(addprefix $(SRC_DIR), boot.s gdts.s reboot.s idts.s)
+ASM_SRCS=$(addprefix $(SRC_DIR), boot.s gdts.s idts.s)
 ASM_OBJS=$(patsubst $(SRC_DIR)%.s, $(OBJ_DIR)%.o, $(ASM_SRCS))
 
-SRCS= $(addprefix $(SRC_DIR), main.c terminal.c print.c cursor.c inb.c outb.c \
-	gdt.c idt.c isr.c keyboard.c)
+SRCS= $(addprefix $(SRC_DIR), main.c terminal.c print.c cursor.c utils.c gdt.c \
+	idt.c isr.c keyboard.c shell.c)
 DEP= $(patsubst $(SRC_DIR)%.c, $(DEP_DIR)%.d, $(SRCS))
 OBJS= $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
 
