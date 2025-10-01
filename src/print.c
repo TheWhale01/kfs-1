@@ -83,6 +83,7 @@ static size_t print_log_level(char c) {
 
     if (!(c >= '0' && c <= '7')) {
         terminal.fcolor = VGA_COLOR_WHITE;
+        terminal.bcolor = VGA_COLOR_BLACK;
         return 0;
     }
     c -= '0';
@@ -174,6 +175,5 @@ size_t printf(const char *s, ...) {
         s++;
     }
     va_end(args);
-    terminal.fcolor = VGA_COLOR_WHITE;
     return len;
 }

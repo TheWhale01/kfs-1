@@ -22,6 +22,7 @@ int kernel_main(void) {
 	init_terminal();
 	init_cursor();
 	init_keyboard();
+
 	// char s2000[VGA_WIDTH * VGA_HEIGHT + 1];
 
 	// // term 0

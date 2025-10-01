@@ -1,6 +1,7 @@
 #include "cursor.h"
 #include "terminal.h"
 #include "julo.h"
+#include "libft.h"
 
 terminal_t terminal = {
 	.screen = 0,
@@ -15,7 +16,7 @@ inline void vga_entry(unsigned char c) {
 }
 
 void stack() {
-	printf("HAHAHAHA LA COMMANDE");
+    printf("bonsoir\n");
 }
 
 // info
@@ -29,22 +30,63 @@ void stack() {
 // screen [index]
 //gérer le backspace
 
+void debug(const char *buff) {(void)buff;}
+
+void setcolor(const char *buff) {
+    size_t arg1_len = ft_strnlen(buff, ' ');
+    const char *colors[] = {"black", "blue", "green", "cyan", "red", "magenta",
+        "brown", "light_grey", "dark_grey", "light_blue", "light_green", "light_cyan",
+        "light_red", "light_magenta", "light_brown", "white"};
+
+    for (size_t i = 0; i < 16; i++) {
+        if (!ft_strncmp(colors[i], buff, ft_strlen(colors[i]))) {
+            terminal.fcolor = i;
+            break;
+        }
+    }
+    for (size_t i = 0; i < 16; i++) {
+        if (!ft_strncmp(colors[i], buff + arg1_len + 1, ft_strlen(colors[i]))) {
+            terminal.bcolor = i;
+            break;
+        }
+    }
+}
+
 void handle_cmd() {
-	if (!ft_strcmp(terminal.CMD_BUFFER[terminal.screen], "stack"))
-		stack();
-	ft_bzero(terminal.CMD_BUFFER[terminal.screen], 80);
+    char buff[VGA_WIDTH];
+    size_t word_len = ft_strnlen(terminal.CMD_BUFFER[terminal.screen], ' ');
+
+    if (terminal.CMD_BUFFER[terminal.screen][0] == '\0')
+        return ;
+    ft_strlcpy(buff, terminal.CMD_BUFFER[terminal.screen], VGA_WIDTH);
+    ft_bzero(terminal.CMD_BUFFER, VGA_WIDTH);
+    if (!ft_strncmp(buff, "stack", word_len))
+        stack();
+    else if (!ft_strncmp(buff, "reboot", word_len))
+    	reboot();
+    else if (!ft_strncmp(buff, "clear", word_len))
+        clearscr();
+    else if (!ft_strncmp(buff, "debug", word_len))
+        debug(buff + word_len + 1);
+    else if (!ft_strncmp(buff, "setcolor", word_len))
+        setcolor(buff + word_len + 1);
+    else if (!ft_strncmp(buff, "screen", word_len))
+        change_screen(ft_atoi(buff + word_len + 1) - 1);
 }
 
 bool check_echappement(char c) {
 	switch (c)
 	{
 		case '\n':
-			line_break();
-			handle_cmd();
+		    line_break();
+		    handle_cmd();
 			return (true);
 		case '\a':
 			return (true);
-		case '\b':
+		case '\b': {
+    			size_t len = ft_strlen(terminal.CMD_BUFFER[terminal.screen]);
+    			terminal.CMD_BUFFER[terminal.screen][len - 1] = '\0';
+    		}
 			line_backspace();
 			return (true);
 		case '\t':
@@ -63,8 +105,10 @@ bool check_echappement(char c) {
 }
 
 void vga_putchar(char c) {
-	check_echappement(c);
-	vga_entry(c);
+    if (check_echappement(c)) {
+        return ;
+    }
+   	vga_entry(c);
 	if (++cursor.VGA_X[terminal.screen] >= VGA_WIDTH) {
 		cursor.VGA_X[terminal.screen] = 0;
 		if (cursor.VGA_Y[terminal.screen] == VGA_HEIGHT - 1)
@@ -121,6 +165,7 @@ void init_terminal(void) {
 void clearscr() {
 	cursor.VGA_X[terminal.screen] = 0;
 	cursor.VGA_Y[terminal.screen] = 0;
+	update_cursor();
 	for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
 		terminal.VGA_MEMORY[i] = (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
 	ft_memcpy(terminal.VGA_SCREEN[terminal.screen], (const char *)terminal.VGA_MEMORY, VGA_WIDTH * VGA_HEIGHT);
