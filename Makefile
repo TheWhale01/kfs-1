@@ -19,7 +19,7 @@ ASM_SRCS=$(addprefix $(SRC_DIR), boot.s gdts.s idts.s)
 ASM_OBJS=$(patsubst $(SRC_DIR)%.s, $(OBJ_DIR)%.o, $(ASM_SRCS))
 
 SRCS= $(addprefix $(SRC_DIR), main.c terminal.c print.c cursor.c utils.c gdt.c \
-	idt.c isr.c keyboard.c shell.c)
+	idt.c isr.c keyboard.c shell.c  signal.c)
 DEP= $(patsubst $(SRC_DIR)%.c, $(DEP_DIR)%.d, $(SRCS))
 OBJS= $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
 
