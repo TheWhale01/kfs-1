@@ -1,6 +1,7 @@
 #include "julo.h"
 #include "idt.h"
 #include "terminal.h"
+#include "signal.h"
 #include <stdint.h>
 
 extern void load_idt(uint32_t);
@@ -59,7 +60,7 @@ void set_idt_gate(uint8_t num, void *base, uint16_t selector, uint8_t flags) {
     idt_entries[num].offset_2 = (((uint32_t)base) >> 16) & 0xffff;
 }
 
-void isr_handler(int_regs_t *regs) {
+void  handle_exceptions(int_regs_t *regs) {
     const char *exception_msg[] = { "Division By Zero", "Debug"," Non Maskable Interrupt",
         "Breakpoint", "Into Detected Overflow", "Out of Bounds", "Invalid Opcode",
         "No Coprocessor", "Double fault", "Coprocessor Segment Overrun", "Bad TSS",
@@ -68,27 +69,31 @@ void isr_handler(int_regs_t *regs) {
         "Reserved", "Reserved", "Reserved", "Reserved", "Reserved", "Reserved",
         "Reserved", "Reserved", "Reserved", "Reserved", "Reserved", "Reserved", "Reserved"
     };
-    if (regs->int_nb < 32) {
-        // Interruption is an excpetion
-        clearscr();
-        printf("System Halted!\nException: %d\n", regs->int_nb);
-        printf("%s", exception_msg[regs->int_nb]);
-        while(true);
-    }
-    else if (regs->int_nb >= 32 && regs->int_nb <= 47) {
-        // Interruption is an IRQ
-        void (*handler)(int_regs_t *regs);
+    clearscr();
+    printf("System Halted!\nException: %d\n", regs->int_nb);
+    printf("%s", exception_msg[regs->int_nb]);
+    // while(true);
+}
 
-        handler = irq_routines[regs->int_nb - 32];
-        if (!handler) {
-            printf("Unknown handler for interrupt request: %d", regs->int_nb);
-            return ;
-        }
-        handler(regs);
-        if (regs->int_nb >= 40)
-            outb(PIC2_COMMAND_PORT, PIC_CMD_EOI);
-        outb(PIC1_COMMAND_PORT, PIC_CMD_EOI);
+void handle_irq(int_regs_t *regs) {
+    void (*handler)(int_regs_t *regs);
+    handler = irq_routines[signals.queue[signals.head].int_nb - 32];
+    if (!handler) {
+        printf("Unknown handler for interrupt request: %d", signals.queue[signals.head].int_nb);
+        return ;
     }
+    handler(regs);
+    if (regs->int_nb >= 40)
+        outb(PIC2_COMMAND_PORT, PIC_CMD_EOI);
+    outb(PIC1_COMMAND_PORT, PIC_CMD_EOI);
+}
+
+void isr_handler(int_regs_t *regs) {
+    if (signals.head >= SIGNAL_QUEUE_SIZE)
+        return ;
+    signals.queue[signals.head].data = regs;
+    signals.queue[signals.head].int_nb = regs->int_nb;
+    signals.head++;
 }
 
 void enable_idt_gate(int int_nb) {

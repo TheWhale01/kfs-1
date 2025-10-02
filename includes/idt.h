@@ -75,7 +75,9 @@ void init_idt(void);
 void init_idt_gates(void);
 void enable_idt_gate(int int_nb);
 void disable_idt_gate(int int_nb);
+void handle_irq(int_regs_t *regs);
 void irq_uninstall_handler(int irq);
+void handle_exceptions(int_regs_t *regs);
 void irq_install_handler(int irq, void (*handler)(int_regs_t *regs));
 void set_idt_gate(uint8_t num, void *base, uint16_t selector, uint8_t flags);
 
