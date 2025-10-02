@@ -10,7 +10,8 @@ void stack(int nb) {
 	asm volatile ("mov %%esp, %0" : "=r"(esp_snapshot));
 
 	printf("\n=== Kernel stack dump ===\n");
-	printf("ESP snapshot = %p index : %d to %d\n\n", (void*)esp_snapshot, nb, nb + 60);
+	printf("ESP snapshot = %p index : %d to %d\n", (void*)esp_snapshot, nb, nb + 60);
+	printf("Address   Value            Address   Value            Address   Value\n\n");
 	for (int i = nb; i < nb + 10; ++i) {
 		for (int j = 0; j < 3; ++j) {
 			uint32_t *addr = esp_snapshot + i*3 + j;
@@ -73,11 +74,11 @@ void info(void) {
 
 void priority(void)
 {
-	printf("Priority Messages List:\n[EMERGENCY] [ALERT] [CRITICAL] [ERROR] [WARNING] [NOTICE] [INFO] [DEBUG]\n");
+	printf("\nPriority Messages List:\n[EMERGENCY] [ALERT] [CRITICAL] [ERROR] [WARNING] [NOTICE] [INFO] [DEBUG]\n");
 }
 
 void handle_cmd() {
-    char buff[VGA_WIDTH];
+    char buff[VGA_WIDTH] = {0};
     size_t word_len = ft_strnlen(terminal.CMD_BUFFER[terminal.screen], ' ');
 
     if (terminal.CMD_BUFFER[terminal.screen][0] == '\0')
