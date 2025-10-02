@@ -92,15 +92,22 @@ void change_screen(size_t new_screen) {
 	update_cursor();
 }
 
+void  write_screen_nb(size_t screen) {
+    change_screen(screen);
+    printf("Screen %d\n", screen + 1);
+    change_screen(0);
+}
+
 void init_terminal(void) {
+    for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
+           terminal.VGA_MEMORY[i] = (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
 	for (size_t i = 0; i < NB_SCREEN; i++) {
 		cursor.VGA_X[i] = 0, cursor.VGA_Y[i] = 0;
 		ft_bzero(terminal.CMD_BUFFER[i], VGA_WIDTH);
 		for (size_t j = 0; j < VGA_WIDTH * VGA_HEIGHT; j++)
 			terminal.VGA_SCREEN[i][j] = (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
+		write_screen_nb(i);
 	}
-	for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
-		terminal.VGA_MEMORY[i] = (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
 }
 
 void clearscr() {
@@ -110,4 +117,5 @@ void clearscr() {
 	for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
 		terminal.VGA_MEMORY[i] = (uint16_t)' ' | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
 	ft_memcpy(terminal.VGA_SCREEN[terminal.screen], (const char *)terminal.VGA_MEMORY, VGA_WIDTH * VGA_HEIGHT);
+	printf("Screen %d\n", terminal.screen + 1);
 }

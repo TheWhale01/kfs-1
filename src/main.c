@@ -8,8 +8,8 @@
 int kernel_main(void) {
 	init_gdt();
 	init_idt();
-	init_terminal();
 	init_cursor();
+	init_terminal();
 	init_keyboard();
 	return (0);
 }
