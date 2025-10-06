@@ -22,10 +22,11 @@
 #define SET_FLAG(x, flag) x |= (flag)
 #define UNSET_FLAG(x, flag) x &= ~(flag)
 
+void halt(void);
 void scroll(void);
 void reboot(void);
-void handle_cmd();
 void shutdown(void);
+void handle_cmd(void);
 void line_break(void);
 void enable_cursor(void);
 void update_cursor(void);
@@ -34,6 +35,7 @@ void line_backspace(void);
 void disable_cursor(void);
 void line_tabulation(void);
 void line_vertical_tab(void);
+void disable_interrupts(void);
 void line_carriage_return(void);
 void outb(uint16_t port, uint8_t val);
 void outw(uint16_t port, uint16_t val);

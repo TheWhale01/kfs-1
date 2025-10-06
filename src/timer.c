@@ -1,7 +1,13 @@
 #include "timer.h"
 #include "idt.h"
 #include "julo.h"
+#include "libft.h"
+#include "signal.h"
 #include <stdint.h>
+
+scheduled_signal_list_t scheduled_signals = {
+    .size = 0,
+};
 
 timer_t timer = {
     .ticks = 0,
@@ -22,4 +28,15 @@ void init_timer(void) {
 void timer_handler(int_regs_t *regs) {
     (void)regs;
     timer.ticks++;
+    if (scheduled_signals.size == 0)
+        return ;
+    for (size_t i = 0; i < scheduled_signals.size; i++) {
+        if (scheduled_signals.queue[i].deliver_tick <= timer.ticks) {
+            if (add_signal(scheduled_signals.queue[i].int_nb, scheduled_signals.queue[i].data)) {
+                ft_memmove(&scheduled_signals.queue[i], &scheduled_signals.queue[i + 1], sizeof(scheduled_signals.queue) * (scheduled_signals.size - i - 1));
+                scheduled_signals.size--;
+                i--;
+            }
+        }
+    }
 }

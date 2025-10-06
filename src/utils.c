@@ -26,7 +26,7 @@ void reboot(void) {
     idt_ptr_t ptr = {0, 0};
 
     disable_cursor();
-    asm volatile ("cli");
+    disable_interrupts();
     asm volatile ("lidt (%0)" : : "r"(&ptr));
     asm volatile ("int $3");
 }
@@ -35,4 +35,12 @@ void shutdown(void) {
     // Only works on QEMU
     disable_cursor();
     outw(0x604, 0x2000);
+}
+
+void disable_interrupts(void) {
+    asm volatile ("cli");
+}
+
+void halt(void) {
+    asm volatile ("hlt");
 }

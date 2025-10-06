@@ -1,5 +1,7 @@
 #pragma once
 #include "idt.h"
+#include "signal.h"
+#include <stdbool.h>
 #include <stdint.h>
 #include <stddef.h>
 
@@ -33,6 +35,9 @@ typedef struct  {
 } timer_t;
 
 extern timer_t timer;
+extern scheduled_signal_list_t scheduled_signals;
 
 void init_timer(void);
 void timer_handler(int_regs_t *regs);
+
+bool add_signal(size_t int_nb, void *data);
