@@ -1,10 +1,12 @@
 #include "julo.h"
+#include "libft.h"
 #include "cursor.h"
 #include "gdt.h"
 #include "idt.h"
 #include "signal.h"
 #include "keyboard.h"
 #include "terminal.h"
+#include "timer.h"
 
 signal_stack_t  signals = {
     .head =  0,
@@ -14,6 +16,7 @@ signal_stack_t  signals = {
 int kernel_main(void) {
 	init_gdt();
 	init_idt();
+	init_timer();
 	init_cursor();
 	init_terminal();
 	init_signal();

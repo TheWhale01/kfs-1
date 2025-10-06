@@ -31,11 +31,6 @@ static void configure_pic(uint8_t offset1, uint8_t offset2) {
     // clear data ports
     outb(PIC1_DATA_PORT, 0);
     outb(PIC2_DATA_PORT, 0);
-
-    // Mask IRQ0 (No PIT)
-    uint8_t mask = inb(PIC1_DATA_PORT);
-    mask |= 0x01;
-    outb(PIC1_DATA_PORT, mask);
 }
 
 void init_idt() {
@@ -73,6 +68,7 @@ void  handle_exceptions(int_regs_t *regs) {
     printf("System Halted!\nException: %d\n", regs->int_nb);
     printf("%s", exception_msg[regs->int_nb]);
     // while(true);
+    asm volatile ("hlt");
 }
 
 void handle_irq(int_regs_t *regs) {
