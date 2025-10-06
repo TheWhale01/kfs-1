@@ -10,7 +10,6 @@
 
 signal_stack_t  signals = {
     .size =  0,
-    .queue = {0},
 };
 
 int kernel_main(void) {
@@ -22,16 +21,16 @@ int kernel_main(void) {
 	init_signal();
 	init_keyboard();
 
-	int q;
-	int a = 1;
-	int d = 0;
-        asm volatile(
-            "xorl %%edx, %%edx\n\t"   /* EDX = 0 (haut du dividende) */
-            "movl %1, %%eax\n\t"      /* placer dividende en EAX */
-            "divl %2\n\t"             /* divise EDX:EAX par %2 -> diviseur 0 provoque exception */
-            : "=a"(q)                 /* sortie : quotient dans EAX */
-            : "r"(a), "r"(d)          /* entrées */
-        );
+	// int q;
+	// int a = 1;
+	// int d = 0;
+    //     asm volatile(
+    //         "xorl %%edx, %%edx\n\t"   /* EDX = 0 (haut du dividende) */
+    //         "movl %1, %%eax\n\t"      /* placer dividende en EAX */
+    //         "divl %2\n\t"             /* divise EDX:EAX par %2 -> diviseur 0 provoque exception */
+    //         : "=a"(q)                 /* sortie : quotient dans EAX */
+    //         : "r"(a), "r"(d)          /* entrées */
+    //     );
 	while (true) {
 	    while (signals.size > 0) {
 			signals.size--;

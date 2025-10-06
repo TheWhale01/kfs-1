@@ -1,6 +1,7 @@
 #include "julo.h"
 #include "libft.h"
 #include "terminal.h"
+#include "keyboard.h"
 #include <stdint.h>
 
 void stack(int nb) {
@@ -70,11 +71,19 @@ void info(void) {
     printf("stack         stack                         Affiche la stack courante\n");
     printf("reboot        reboot                        Redemarre la machine\n");
     printf("shutdown      shutdown                      Eteint la machine\n");
+    printf("layout        layout   <layout_name>        Change le layout du clavier\n");
 }
 
 void priority(void)
 {
 	printf("\nPriority Messages List:\n[EMERGENCY] [ALERT] [CRITICAL] [ERROR] [WARNING] [NOTICE] [INFO] [DEBUG]\n");
+}
+
+void change_layout(const char *buff) {
+    if (!ft_strncmp(buff, "azerty", ft_strlen("azerty")) && ft_strlen("azerty") == ft_strlen(buff))
+        change_kb_layout(SCANCODE_INIT_AZERTY, SCANCODE_SHIFT_INIT_AZERTY);
+    else if (!ft_strncmp(buff, "qwerty", ft_strlen("qwerty")) && ft_strlen("qwerty") == ft_strlen(buff))
+        change_kb_layout(SCANCODE_INIT_QWERTY, SCANCODE_SHIFT_INIT_QWERTY);
 }
 
 void handle_cmd() {
@@ -103,4 +112,6 @@ void handle_cmd() {
         setcolor(buff + word_len + 1);
     else if (!ft_strncmp(buff, "screen", ft_strlen("screen")) && ft_strlen("screen") == word_len)
         change_screen(ft_atoi(buff + word_len + 1) - 1);
+    else if (!ft_strncmp(buff, "layout", ft_strlen("layout")) && ft_strlen("layout") == word_len)
+        change_layout(buff + word_len + 1);
 }

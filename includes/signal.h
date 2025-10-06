@@ -10,9 +10,9 @@ typedef struct {
 } signal_t;
 
 typedef struct {
-    size_t int_nb;
-    void *data;
-    uint64_t deliver_tick;
+    size_t      int_nb;
+    void        *data;
+    uint64_t    deliver_tick;
 } scheduled_signal_t;
 
 typedef struct {

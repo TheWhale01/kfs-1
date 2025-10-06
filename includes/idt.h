@@ -2,8 +2,10 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define IDT_ENTRY_SIZE 256
-#define IRQ_ROUTINE_SIZE 16
+#define STACK_SNAPSHOT_SIZE 16
+
+#define IDT_ENTRY_SIZE      256
+#define IRQ_ROUTINE_SIZE    16
 
 #define PIC1_COMMAND_PORT   0x20
 #define PIC1_DATA_PORT      0x21
@@ -54,12 +56,12 @@ typedef enum {
 } pic_icw1_e;
 
 typedef enum {
-    PIC_ICW4_8096                   = 0x1,
-    PIC_ICW4_AUTO_EOI               = 0x2,
-    PIC_ICW4_BUFFER_MASTER          = 0x4,
-    PIC_ICW4_BUFFER_SLAVE           = 0x0,
-    PIC_ICW4_BUFFERED               = 0x8,
-    PIC_ICW4_SFNM                   = 0x10
+    PIC_ICW4_8096           = 0x1,
+    PIC_ICW4_AUTO_EOI       = 0x2,
+    PIC_ICW4_BUFFER_MASTER  = 0x4,
+    PIC_ICW4_BUFFER_SLAVE   = 0x0,
+    PIC_ICW4_BUFFERED       = 0x8,
+    PIC_ICW4_SFNM           = 0x10
 } pic_icw4_e;
 
 typedef enum {
@@ -69,7 +71,6 @@ typedef enum {
 extern idt_entry_t idt_entries[IDT_ENTRY_SIZE];
 extern idt_ptr_t   idt_ptr;
 extern void        *irq_routines[IRQ_ROUTINE_SIZE];
-
 
 void init_idt(void);
 void init_idt_gates(void);
