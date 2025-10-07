@@ -101,8 +101,7 @@ void handle_exceptions(int_regs_t *regs) {
     print_regs(regs);
     clean_regs();
     save_stack(regs);
-    while (true)
-        halt();
+    halt();
 }
 
 void handle_irq(int_regs_t *regs) {

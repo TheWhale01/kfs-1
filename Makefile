@@ -15,11 +15,11 @@ NAME_ISO=$(subst .elf,.iso,$(NAME))
 BOOT_DIR=$(addsuffix /boot,$(ISO_DIR))
 GRUB_DIR=$(addsuffix /grub,$(BOOT_DIR))
 
-ASM_SRCS=$(addprefix $(SRC_DIR), boot.s gdts.s idts.s)
+ASM_SRCS=$(addprefix $(SRC_DIR), boot.s gdts.s idts.s tests/sys_write.s tests/exception.s)
 ASM_OBJS=$(patsubst $(SRC_DIR)%.s, $(OBJ_DIR)%.o, $(ASM_SRCS))
 
 SRCS= $(addprefix $(SRC_DIR), main.c terminal.c print.c cursor.c utils.c gdt.c \
-	idt.c isr.c keyboard.c shell.c  signal.c timer.c)
+	idt.c isr.c keyboard.c shell.c signal.c timer.c syscalls.c)
 DEP= $(patsubst $(SRC_DIR)%.c, $(DEP_DIR)%.d, $(SRCS))
 OBJS= $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRCS))
 
@@ -31,6 +31,7 @@ $(OBJ_DIR)%.o: $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.s
+	@mkdir -p $(dir $@)
 	$(CASM) $(ASM_FLAGS) $< -o $@
 
 $(NAME): $(SRC_DIR)isrs.s $(SRC_DIR)isr.c $(ASM_OBJS) $(OBJS)
