@@ -11,9 +11,8 @@ terminal_t terminal = {
 };
 
 inline void vga_entry(unsigned char c) {
-	// terminal.VGA_MEMORY[cursor.VGA_Y[terminal.screen] * VGA_WIDTH + cursor.VGA_X[terminal.screen]]
- //        = (uint16_t)c | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
- terminal.VGA_MEMORY[cursor.VGA_Y[terminal.screen] * VGA_WIDTH + cursor.VGA_X[terminal.screen]] = ((uint16_t)VGA_COLOR_WHITE << 8) | c;
+	terminal.VGA_MEMORY[cursor.VGA_Y[terminal.screen] * VGA_WIDTH + cursor.VGA_X[terminal.screen]]
+        = (uint16_t)c | (uint16_t)(terminal.fcolor | terminal.bcolor << 4) << 8;
 }
 
 bool check_echappement(char c) {
@@ -85,8 +84,8 @@ void scroll(void) {
 void change_screen(size_t new_screen) {
 	if (new_screen == terminal.screen || new_screen > 3)
 		return ;
-	ft_memcpy(terminal.VGA_SCREEN[terminal.screen],
-		(const char *)terminal.VGA_MEMORY, VGA_WIDTH * VGA_HEIGHT);
+	for (size_t j = 0; j < VGA_WIDTH * VGA_HEIGHT; j++)
+		terminal.VGA_SCREEN[terminal.screen][j] = terminal.VGA_MEMORY[j];
 	terminal.screen = new_screen;
 	for (size_t i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
 		terminal.VGA_MEMORY[i] = terminal.VGA_SCREEN[new_screen][i];

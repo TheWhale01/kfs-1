@@ -77,7 +77,7 @@ void keyboard_handler(int_regs_t *regs)
 		case SC_RSHIFT:
             keyboard.shift_on = keyboard.pressed;
             break;
-        case SC_ALT:
+        case SC_LALT:
             keyboard.alt_on = keyboard.pressed;
             break;
         default:
@@ -98,12 +98,9 @@ void keyboard_handler(int_regs_t *regs)
 			vga_putchar(keyboard.shift_on ? keyboard.SC_SHIFT[keyboard.scancode] : keyboard.SC_US[keyboard.scancode]);
 			len = ft_strlen(terminal.CMD_BUFFER[terminal.screen]);
 			if (len < VGA_WIDTH)
-					terminal.CMD_BUFFER[terminal.screen][len] = keyboard.shift_on ? keyboard.SC_SHIFT[keyboard.scancode] : keyboard.SC_US[keyboard.scancode];
-			else
-			{
-				ft_bzero(terminal.CMD_BUFFER[terminal.screen], VGA_WIDTH);
-				len = 0;
-			}
+					terminal.CMD_BUFFER[terminal.screen][len++] = keyboard.shift_on ? keyboard.SC_SHIFT[keyboard.scancode] : keyboard.SC_US[keyboard.scancode];
+			if (len == VGA_WIDTH)
+				handle_cmd();
 		}
 	}
 }

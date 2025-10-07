@@ -72,6 +72,7 @@ void info(void) {
     printf("reboot        reboot                        Redemarre la machine\n");
     printf("shutdown      shutdown                      Eteint la machine\n");
     printf("layout        layout   <layout_name>        Change le layout du clavier\n");
+    printf("get_line      get_line <message>            Affiche la ligne <message>\n");
 }
 
 void priority(void)
@@ -87,12 +88,12 @@ void change_layout(const char *buff) {
 }
 
 void handle_cmd() {
-    char buff[VGA_WIDTH] = {0};
+    char buff[VGA_WIDTH + 1] = {0};
     size_t word_len = ft_strnlen(terminal.CMD_BUFFER[terminal.screen], ' ');
 
     if (terminal.CMD_BUFFER[terminal.screen][0] == '\0')
         return ;
-    ft_strlcpy(buff, terminal.CMD_BUFFER[terminal.screen], VGA_WIDTH);
+    ft_strlcpy(buff, terminal.CMD_BUFFER[terminal.screen], VGA_WIDTH + 1);
     ft_bzero(terminal.CMD_BUFFER[terminal.screen], VGA_WIDTH);
     if (!ft_strncmp(buff, "info", ft_strlen("info")) && ft_strlen("info") == word_len)
 		info();
@@ -114,4 +115,6 @@ void handle_cmd() {
         change_screen(ft_atoi(buff + word_len + 1) - 1);
     else if (!ft_strncmp(buff, "layout", ft_strlen("layout")) && ft_strlen("layout") == word_len)
         change_layout(buff + word_len + 1);
+    else if (!ft_strncmp(buff, "get_line", ft_strlen("get_line")) && ft_strlen("get_line") == word_len)
+        printf("%s\n", buff + word_len + 1);
 }

@@ -8,7 +8,8 @@ void keyboard_handler(int_regs_t *regs);
 
 #define SC_LSHIFT   0x2A
 #define SC_RSHIFT   0x36
-#define SC_ALT      0x38
+#define SC_LALT     0x38
+#define SC_RALT     0xE0
 #define NEW_LINE    0x1C
 
 typedef struct {
