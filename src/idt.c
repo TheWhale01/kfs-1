@@ -99,8 +99,8 @@ void handle_exceptions(int_regs_t *regs) {
     printf("System Halted!\nException: %d\n", regs->int_nb);
     printf("%s\n", exception_msg[regs->int_nb]);
     print_regs(regs);
-    clean_regs();
     save_stack(regs);
+    clean_regs();
     halt();
 }
 
