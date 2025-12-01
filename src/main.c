@@ -25,7 +25,7 @@ int kernel_main(void) {
 	init_keyboard();
 
 	// test_div_0();
-	test_sys_write();
+	// test_sys_write();
 	while (true) {
 	    while (signals.size > 0) {
 			signals.size--;
